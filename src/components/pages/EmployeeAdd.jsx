@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -12,6 +12,11 @@ const EmployeeAdd = () => {
   const [address, setAddress] = useState("");
   const [bornDate, setBornDate] = useState("");
   const [startWorkData, setStartWorkData] = useState("");
+  const [selectedWorkStatus, setSelectedWorkStatus] = useState("");
+  const [selectedPosition, setSelectedPosition] = useState("");
+
+  const [workStatuses, setWorkStatuses] = useState([]);
+  const [positions, setPositions] = useState([]);
 
   const addNewEmployee = async () => {
     const newEmployeeData = {
@@ -24,6 +29,8 @@ const EmployeeAdd = () => {
       address: address,
       born_date: bornDate,
       start_work_date: startWorkData,
+      work_status_id: selectedWorkStatus,
+      position_id: selectedPosition,
     };
 
     const { data, error } = await supabase
@@ -36,7 +43,38 @@ const EmployeeAdd = () => {
     } else {
       console.log("New employee", data);
     }
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setPhone("");
+    setCountry("");
+    setCity("");
+    setAddress("");
+    setBornDate("");
+    setStartWorkData("");
+    setSelectedWorkStatus("");
+    setSelectedPosition("");
   };
+
+  const fetchDropdownData = async () => {
+    const { data: workStatusData, error: wsError } = await supabase
+      .from("WorkStatus")
+      .select("*");
+
+    const { data: positionData, error: posError } = await supabase
+      .from("Position")
+      .select("*");
+
+    if (wsError) console.log("WorkStatus error:", wsError);
+    if (posError) console.log("Position error:", posError);
+
+    setWorkStatuses(workStatusData || []);
+    setPositions(positionData || []);
+  };
+
+  useEffect(() => {
+    fetchDropdownData();
+  }, []);
 
   return (
     <div className="overflow-x-auto p-5">
@@ -53,7 +91,7 @@ const EmployeeAdd = () => {
         <form>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 mb-1">First Name</label>
+              <label className="block text-gray-700 mb-1 ">First Name</label>
               <input
                 type="text"
                 value={firstName}
@@ -83,7 +121,7 @@ const EmployeeAdd = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="+1 (305) 555-1234"
+                placeholder="0641234567"
               />
             </div>
 
@@ -151,6 +189,40 @@ const EmployeeAdd = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="123 Main St"
               />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 mb-1">Work Status</label>
+              <select
+                value={selectedWorkStatus}
+                onChange={(e) => setSelectedWorkStatus(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                <option value="">--</option>
+                {workStatuses.map((status) => (
+                  <option key={status.id} value={status.id}>
+                    {status.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-700 mb-1">Position</label>
+              <select
+                value={selectedPosition}
+                onChange={(e) => setSelectedPosition(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                <option value="">--</option>
+                {positions.map((position) => (
+                  <option key={position.id} value={position.id}>
+                    {position.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
