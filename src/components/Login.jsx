@@ -26,10 +26,17 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 to-blue-400">
+    <div className="min-h-screen flex items-center justify-center bg-blue-300">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex justify-center pb-5">
+          <img
+            src="https://cdn-icons-png.freepik.com/512/622/622850.png"
+            alt=""
+            className="h-20"
+          />
+        </div>
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Employees App
+          Employees Portal Log In
         </h2>
 
         <form onSubmit={handleLogIn} className="space-y-4">
@@ -41,7 +48,7 @@ const Login = () => {
               type="email"
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition"
-              placeholder="you@example.com"
+              placeholder="you@gmail.com"
               required
             />
           </div>

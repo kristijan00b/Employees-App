@@ -3,6 +3,7 @@ import App from "./App";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
 import PrivateRoutes from "./components/PrivateRoutes";
+import Employees from "./pages/Employees";
 
 export const router = createBrowserRouter([
   {
@@ -11,16 +12,21 @@ export const router = createBrowserRouter([
     children: [{}],
   },
   {
-    path: "/login",
+    path: "login",
     element: <Login />,
   },
   {
-    path: "/dashboard",
+    path: "dashboard",
     element: (
       <PrivateRoutes>
         <Dashboard />{" "}
       </PrivateRoutes>
     ),
-    children: [{}],
+    children: [
+      {
+        path: "employees",
+        element: <Employees />,
+      },
+    ],
   },
 ]);
