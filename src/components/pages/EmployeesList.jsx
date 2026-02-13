@@ -109,7 +109,6 @@ const EmployeesList = () => {
               <th className="px-4 py-2 text-left">Status</th>
               <th className="px-4 py-2 text-left">E-mail</th>
               <th className="px-4 py-2 text-left">Phone</th>
-              <th className="px-4 py-2 text-left">Address</th>
               <th className="px-4 py-2 text-left">View</th>
             </tr>
           </thead>
@@ -143,9 +142,6 @@ const EmployeesList = () => {
                 </td>
                 <td className="px-4 py-2 border-b border-gray-200">
                   {employee.phone}
-                </td>
-                <td className="px-4 py-2 border-b border-gray-200">
-                  {employee.city}, {employee.address}
                 </td>
                 <td
                   className="hover:cursor-pointer px-4 py-2 border-b border-gray-200 text-center"

@@ -1,8 +1,10 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import { UserAuth } from "../context/AuthContext";
 
 const Sidebar = () => {
   const location = useLocation();
+  const { logOutUser } = UserAuth();
 
   const linkClass = (path) =>
     `block px-4 py-2 rounded-lg transition ${
@@ -26,12 +28,21 @@ const Sidebar = () => {
         </Link>
 
         <Link
-          to="/dashboard/employees"
-          className={linkClass("/dashboard/employees")}
+          to="/dashboard/employees-list"
+          className={linkClass("/dashboard/employees-list")}
         >
           Employees List
         </Link>
       </nav>
+
+      <div className="p-4 border-t border-gray-800">
+        <button
+          onClick={logOutUser}
+          className="hover:cursor-pointer w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition"
+        >
+          Logout
+        </button>
+      </div>
 
       <div className="p-4 border-t border-gray-800 text-sm text-gray-400">
         © {new Date().getFullYear()} Employees Portal App
