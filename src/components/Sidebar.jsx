@@ -33,6 +33,12 @@ const Sidebar = () => {
         >
           Employees List
         </Link>
+        <Link
+          to="/dashboard/employee-add"
+          className={linkClass("/dashboard/employee-add")}
+        >
+          Add Employee
+        </Link>
       </nav>
 
       <div className="p-4 border-t border-gray-800">

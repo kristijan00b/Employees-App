@@ -66,11 +66,11 @@ const EmployeesList = () => {
   const totalPages = Math.ceil(employeesList.length / rowsPerPage);
 
   return (
-    <div className="overflow-x-auto p-4 ">
+    <div className="overflow-x-auto p-5">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Employees</h1>
+        <h2 className="text-2xl font-bold">Employees</h2>
         <Link
-          to="/"
+          to="/dashboard/employee-add"
           className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
         >
           Add Employee
