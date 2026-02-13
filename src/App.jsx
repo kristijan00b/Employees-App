@@ -6,7 +6,6 @@ function App() {
 
   return (
     <div>
-      <h1>Employee App</h1>
       <Login />
     </div>
   );
