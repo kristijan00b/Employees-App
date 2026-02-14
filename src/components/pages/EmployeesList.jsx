@@ -10,6 +10,7 @@ const EmployeesList = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [selected, setSelected] = useState("start_work_date-asc");
   const [searchEmployee, setSearchEmployee] = useState("");
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
 
   useEffect(() => {
     if (searchEmployee == "") {
@@ -46,7 +47,7 @@ const EmployeesList = () => {
     if (error) {
       console.log("Error fetching all employees", error);
     } else {
-      console.log(data)
+      console.log(data);
       setEmployeesList(data);
     }
   };
@@ -98,7 +99,7 @@ const EmployeesList = () => {
           </div>
         </div>
       </div>
-      <div>
+      <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-200 shadow-lg">
           <thead className="bg-blue-500 text-white">
             <tr>
@@ -147,7 +148,9 @@ const EmployeesList = () => {
                   className="hover:cursor-pointer px-4 py-2 border-b border-gray-200 text-center"
                   onClick={() => setSelectedEmployeeId(employee.id)}
                 >
-                  📝
+                  <Link to={`/dashboard/employee-profile/${employee.id}`}>
+                    📝
+                  </Link>
                 </td>
               </tr>
             ))}

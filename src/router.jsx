@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import PrivateRoutes from "./components/PrivateRoutes";
 import EmployeesList from "./components/pages/EmployeesList";
 import EmployeeAdd from "./components/pages/EmployeeAdd";
+import EmployeeProfile from "./components/pages/EmployeeProfile";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
       {
         path: "employee-add",
         element: <EmployeeAdd />,
+      },
+      {
+        path: "employee-profile/:employeeId",
+        element: <EmployeeProfile />,
       },
     ],
   },

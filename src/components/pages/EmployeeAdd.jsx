@@ -105,7 +105,7 @@ const EmployeeAdd = () => {
           </div>
         )}
       </div>
-      <div className=" mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+      <div className=" mx-auto p-5 bg-white rounded-lg shadow-md mt-5">
         <form onSubmit={addNewEmployee}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
