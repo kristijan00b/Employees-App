@@ -18,7 +18,11 @@ const EmployeeAdd = () => {
   const [workStatuses, setWorkStatuses] = useState([]);
   const [positions, setPositions] = useState([]);
 
-  const addNewEmployee = async () => {
+  const [successMessageEmployee, setSuccessMessageEmployee] = useState(null);
+
+  const addNewEmployee = async (e) => {
+    console.log("BD: ", bornDate);
+    e.preventDefault(); //stopin reload on submit form
     const newEmployeeData = {
       first_name: firstName,
       last_name: lastName,
@@ -42,7 +46,12 @@ const EmployeeAdd = () => {
       console.log("Insert employee data error ", error);
     } else {
       console.log("New employee", data);
+      setSuccessMessageEmployee({ firstName, lastName });
+      setTimeout(() => {
+        setSuccessMessageEmployee(null);
+      }, 3000);
     }
+
     setFirstName("");
     setLastName("");
     setEmail("");
@@ -87,8 +96,17 @@ const EmployeeAdd = () => {
           Back to Employees List
         </Link>
       </div>
+
+      <div>
+        {successMessageEmployee && (
+          <div className="mb-4 rounded-2xl bg-green-100 border border-green-400 text-green-800 px-6 py-4 shadow-md transition-all">
+            Employee {successMessageEmployee.firstName}{" "}
+            {successMessageEmployee.lastName} successfully added!
+          </div>
+        )}
+      </div>
       <div className=" mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
-        <form>
+        <form onSubmit={addNewEmployee}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-gray-700 mb-1 ">First Name</label>
@@ -97,7 +115,7 @@ const EmployeeAdd = () => {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="John"
+                placeholder="Neko"
                 required
               />
             </div>
@@ -109,7 +127,7 @@ const EmployeeAdd = () => {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Doe"
+                placeholder="Nekic"
                 required
               />
             </div>
@@ -165,7 +183,7 @@ const EmployeeAdd = () => {
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Florida"
+                placeholder="Serbia"
               />
             </div>
 
@@ -176,7 +194,7 @@ const EmployeeAdd = () => {
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Miami"
+                placeholder="Beograd"
               />
             </div>
 
@@ -187,7 +205,7 @@ const EmployeeAdd = () => {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="123 Main St"
+                placeholder="Gavrila Principa 1"
               />
             </div>
 
@@ -228,7 +246,7 @@ const EmployeeAdd = () => {
 
           <div className="mt-6 flex justify-end">
             <button
-              onClick={addNewEmployee}
+              type="submit"
               className="hover:cursor-pointer px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
             >
               Add Employee

@@ -19,6 +19,7 @@ export const AuthContextProvider = ({ children }) => {
   const logOutUser = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) console.log("Logout error", error);
+    else window.location.reload();
   };
 
   useEffect(() => {
