@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 
 const EmployeeProfile = () => {
   const { employeeId } = useParams();
   const [employeeData, setEmployeeData] = useState("");
   const [loading, setLoading] = useState(true);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
+
+  const navigate = useNavigate();
 
   const fetchEmployee = async () => {
     const { data, error } = await supabase
@@ -35,11 +38,16 @@ const EmployeeProfile = () => {
     <div className="overflow-x-auto p-5">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold mb-1">
-            {employeeData.first_name} {employeeData.last_name}
-          </h2>
-          
-        <button className="hover:cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition">
+        <h2 className="text-2xl font-bold mb-1">
+          {employeeData.first_name} {employeeData.last_name}
+        </h2>
+
+        <button
+          className="hover:cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+          onClick={() =>
+            navigate(`/dashboard/employee-profile/${employeeId}/edit`)
+          }
+        >
           Edit Employee
         </button>
       </div>
