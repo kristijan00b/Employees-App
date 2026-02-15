@@ -6,6 +6,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState("");
+  const [error, setError] = useState("");
 
   const { session, logInUser } = UserAuth();
   const navigate = useNavigate();
@@ -13,13 +14,18 @@ const Login = () => {
   const handleLogIn = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(""); // reset errora
+
     try {
       const result = await logInUser(email, password);
+
       if (result.success) {
         navigate("/dashboard");
+      } else {
+        setError(result.message || "Invalid email or password.");
       }
     } catch (error) {
-      console.log("Log in error ", error);
+      setError("Invalid email or password.");
     } finally {
       setLoading(false);
     }
@@ -69,11 +75,16 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="hover:cursor-pointer w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
+        {error && (
+          <div className="mt-3 text-sm text-red-600 text-center bg-red-50 border border-red-200 py-2 rounded-lg">
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );
