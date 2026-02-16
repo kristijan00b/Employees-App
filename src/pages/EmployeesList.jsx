@@ -101,7 +101,7 @@ const EmployeesList = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full border border-gray-200 shadow-lg">
           <thead className="bg-blue-500 text-white">
             <tr>
@@ -158,41 +158,74 @@ const EmployeesList = () => {
             ))}
           </tbody>
         </table>
-      </div>
-      <div className="flex justify-center mt-4 space-x-2">
-        <button
-          className={`px-3 py-1 rounded 
+        <div className="flex justify-center mt-4 space-x-2">
+          <button
+            className={`px-3 py-1 rounded 
                       ${
                         currentPage === 1
                           ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                           : "bg-gray-200 hover:bg-gray-300 hover:cursor-pointer"
                       }
                     `}
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          {"<<"} Previous
-        </button>
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            {"<<"} Previous
+          </button>
 
-        <span className="px-3 py-1">
-          Page {currentPage} of {totalPages}
-        </span>
+          <span className="px-3 py-1">
+            Page {currentPage} of {totalPages}
+          </span>
 
-        <button
-          className={`px-3 py-1 rounded 
+          <button
+            className={`px-3 py-1 rounded 
                       ${
                         currentPage === totalPages
                           ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                           : "bg-gray-200 hover:bg-gray-300 hover:cursor-pointer"
                       }
                     `}
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          disabled={currentPage === totalPages}
-        >
-          Next {">>"}
-        </button>
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+          >
+            Next {">>"}
+          </button>
+        </div>
+      </div>
+
+      <div className="md:hidden space-y-3">
+        {currentRows.map((employee) => (
+          <div
+            key={employee.id}
+            className="bg-white shadow-md rounded-xl p-4 border border-gray-200"
+          >
+            <p className="text-sm mb-2">
+              <span className="text-gray-500 text-xs">ID </span>
+              <span className="font-semibold">{employee.id}</span>
+            </p>
+
+            <div className="mb-1">
+              <p className="text-xs text-gray-500">Full Name</p>
+              <p className="font-semibold">
+                {employee.first_name} {employee.last_name}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Position</p>
+              <p className="font-medium">{employee.Position?.name}</p>
+            </div>
+
+            <Link
+              to={`/dashboard/employee-profile/${employee.id}`}
+              className="mt-3 inline-block text-blue-500 text-xs font-medium"
+            >
+              View Profile →
+            </Link>
+          </div>
+        ))}
       </div>
     </div>
   );
