@@ -80,7 +80,7 @@ const Navbar = () => {
 
           <button
             onClick={logOutUser}
-            className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white transition mt-2"
+            className="hover:cursor-pointer w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white transition mt-2"
           >
             Logout
           </button>
