@@ -20,7 +20,7 @@ const Login = () => {
       const result = await logInUser(email, password);
 
       if (result.success) {
-        navigate("/dashboard");
+        navigate("/dashboard/employees-list");
       } else {
         setError(result.message || "Invalid email or password.");
       }

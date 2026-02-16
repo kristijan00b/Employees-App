@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient"; // proveri putanju
 
-const RequestTimeOff = ({ employeeId }) => {
+const RequestTimeOff = ({ employeeId, onSuccess }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false);
@@ -10,22 +10,28 @@ const RequestTimeOff = ({ employeeId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setSuccessMessage("");
-    setErrorMessage("");
 
+    const hasEnoughPto = await checkPtoAvailability();
+
+    if (!hasEnoughPto) {
+      setLoading(false);
+      return;
+    }
     try {
       const { data, error } = await supabase.from("PtoRequest").insert([
         {
           start_date: startDate,
           end_date: endDate,
-          employee_id: employeeId, // ovde šaljemo employeeId
+          employee_id: employeeId,
         },
       ]);
 
-      if (error) throw error;
-
-      setSuccessMessage("PTO request successfully submitted!");
+      if (error) {
+        console.log(error);
+      } else {
+        setSuccessMessage("PTO request successfully submitted!");
+        if (onSuccess) onSuccess();
+      }
       setStartDate("");
       setEndDate("");
     } catch (error) {
@@ -33,6 +39,55 @@ const RequestTimeOff = ({ employeeId }) => {
       setErrorMessage("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkPtoAvailability = async () => {
+    try {
+      const { data: employeeData, error: employeeError } = await supabase
+        .from("Employee")
+        .select("pto")
+        .eq("id", employeeId)
+        .single();
+
+      if (employeeError) throw employeeError;
+
+      const totalPto = employeeData.pto;
+
+      const { data: requests, error: requestError } = await supabase
+        .from("PtoRequest")
+        .select("start_date, end_date")
+        .eq("employee_id", employeeId);
+
+      if (requestError) throw requestError;
+
+      let usedDays = 0;
+
+      requests.forEach((request) => {
+        const start = new Date(request.start_date);
+        const end = new Date(request.end_date);
+
+        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+        usedDays += days;
+      });
+
+      const newStart = new Date(startDate);
+      const newEnd = new Date(endDate);
+
+      const requestedDays =
+        Math.ceil((newEnd - newStart) / (1000 * 60 * 60 * 24)) + 1;
+
+      if (usedDays + requestedDays > totalPto) {
+        setErrorMessage("Not enough PTO days remaining.");
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error(err);
+      setErrorMessage("Error checking PTO balance.");
+      return false;
     }
   };
 

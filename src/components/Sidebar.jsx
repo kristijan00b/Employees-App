@@ -23,10 +23,6 @@ const Sidebar = () => {
         />
       </div>
       <nav className="flex-1 p-3 space-y-2">
-        <Link to="/dashboard" className={linkClass("/dashboard")}>
-          Dashboard
-        </Link>
-
         <Link
           to="/dashboard/employees-list"
           className={linkClass("/dashboard/employees-list")}

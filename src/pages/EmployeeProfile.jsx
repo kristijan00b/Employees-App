@@ -8,6 +8,8 @@ const EmployeeProfile = () => {
   const [employeeData, setEmployeeData] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
+  const [ptos, setPtos] = useState([]);
+  const [totalPtoDays, setTotalPtoDays] = useState(0);
 
   const navigate = useNavigate();
 
@@ -27,7 +29,32 @@ const EmployeeProfile = () => {
     setLoading(false);
   };
 
+  const fetchPtos = async () => {
+    const { data, error } = await supabase
+      .from("PtoRequest")
+      .select("*")
+      .eq("employee_id", employeeId);
+
+    if (error) {
+      console.log("Error fetching ptos", error);
+    } else {
+      setPtos(data);
+
+      const totalDays = data.reduce((total, pto) => {
+        const start = new Date(pto.start_date);
+        const end = new Date(pto.end_date);
+
+        const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+        return total + diffDays;
+      }, 0);
+
+      setTotalPtoDays(totalDays);
+    }
+  };
+
   useEffect(() => {
+    fetchPtos();
     fetchEmployee();
   }, [employeeId]);
 
@@ -55,7 +82,7 @@ const EmployeeProfile = () => {
 
       {/* Personal Info */}
       <div className="mb-5">
-        <h3 className="text-xl font-semibold mb-3 pb-1 pl-3 bg-blue-500 text-white rounded-md">
+        <h3 className="text-md font-semibold mb-3 pl-3 bg-blue-500 text-white rounded-md">
           Personal Info
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -82,7 +109,7 @@ const EmployeeProfile = () => {
 
       {/* Work Info */}
       <div className="mb-5">
-        <h3 className="text-xl font-semibold mb-3 pb-1 pl-3 bg-blue-500 text-white rounded-md">
+        <h3 className="text-md font-semibold mb-3 pl-3 bg-blue-500 text-white rounded-md">
           Work Info
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -109,7 +136,7 @@ const EmployeeProfile = () => {
 
       {/* Contact Info */}
       <div className="mb-5">
-        <h3 className="text-xl font-semibold mb-3 pb-1 pl-3 bg-blue-500 text-white rounded-md">
+        <h3 className="text-md font-semibold mb-3 pl-3 bg-blue-500 text-white rounded-md">
           Contact Info
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
@@ -139,7 +166,7 @@ const EmployeeProfile = () => {
       </div>
       {/* PTO Info */}
       <div className="mb-5">
-        <h3 className="text-xl font-semibold mb-3 pb-1 pl-3 bg-blue-500 text-white rounded-md">
+        <h3 className="text-md font-semibold mb-3 pl-3 bg-blue-500 text-white rounded-md">
           PTO
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
@@ -149,11 +176,11 @@ const EmployeeProfile = () => {
           </div>
           <div>
             <p className="text-gray-500 text-xs">Available days off</p>
-            <p className="text-gray-900 font-medium">{employeeData.pto}</p>
+            <p className="text-gray-900 font-medium">{employeeData.pto-totalPtoDays}</p>
           </div>
         </div>
         <div>
-          <RequestTimeOff employeeId={employeeData.id} />
+          <RequestTimeOff employeeId={employeeData.id} onSuccess={() => fetchPtos()} />
         </div>
       </div>
     </div>

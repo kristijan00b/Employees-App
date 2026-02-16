@@ -213,7 +213,9 @@ const EmployeeAdd = () => {
               />
             </div>
             <div>
-              <label className="block text-gray-700 mb-1">Annually days off</label>
+              <label className="block text-gray-700 mb-1">
+                Annually Days Off
+              </label>
               <input
                 type="number"
                 value={pto}
