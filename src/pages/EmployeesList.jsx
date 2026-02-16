@@ -67,7 +67,7 @@ const EmployeesList = () => {
   const totalPages = Math.ceil(employeesList.length / rowsPerPage);
 
   return (
-    <div className="overflow-x-auto p-5">
+    <div className="overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Employees</h2>
         <Link
@@ -77,8 +77,9 @@ const EmployeesList = () => {
           Add Employee
         </Link>
       </div>
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2 rounded-2xl shadow-lg bg-white px-4 py-3 w-md focus-within:ring-2 focus-within:ring-black/10 transition">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+        {/* Search input */}
+        <div className="flex items-center gap-2 rounded-2xl shadow-lg bg-white px-4 py-3 w-full md:w-md focus-within:ring-2 focus-within:ring-black/10 transition">
           <input
             type="text"
             placeholder="🔍︎ Search employees"
@@ -86,19 +87,20 @@ const EmployeesList = () => {
             className="w-full outline-none text-sm placeholder:text-gray-400"
           />
         </div>
-        <div>
-          <div>
-            <select
-              value={selected}
-              onChange={handleChangeSort}
-              className="hover:cursor-pointer flex items-center gap-2 rounded-2xl shadow-lg bg-white px-4 py-3 w-2xs focus-within:ring-2 focus-within:ring-black/10 transition"
-            >
-              <option value="start_work_date-asc">Start work date ⬇</option>
-              <option value="start_work_date-desc">Start work date ⬆</option>
-            </select>
-          </div>
+
+        {/* Sort dropdown */}
+        <div className="w-full md:w-auto">
+          <select
+            value={selected}
+            onChange={handleChangeSort}
+            className="hover:cursor-pointer flex items-center gap-2 rounded-2xl shadow-lg bg-white px-4 py-3 w-full md:w-3xs focus-within:ring-2 focus-within:ring-black/10 transition"
+          >
+            <option value="start_work_date-asc">Start work date ⬇</option>
+            <option value="start_work_date-desc">Start work date ⬆</option>
+          </select>
         </div>
       </div>
+
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-200 shadow-lg">
           <thead className="bg-blue-500 text-white">

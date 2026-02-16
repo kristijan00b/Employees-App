@@ -90,7 +90,7 @@ const EmployeeAdd = () => {
   }, []);
 
   return (
-    <div className="overflow-x-auto p-5">
+    <div className="overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Add New Employee</h2>
         <Link
@@ -109,7 +109,7 @@ const EmployeeAdd = () => {
           </div>
         )}
       </div>
-      <div className=" mx-auto p-5 bg-white rounded-lg shadow-md mt-5">
+      <div className="mx-auto p-5 bg-white rounded-lg shadow-md mt-5">
         <form onSubmit={addNewEmployee}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>

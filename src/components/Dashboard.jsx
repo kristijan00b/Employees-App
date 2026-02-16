@@ -15,7 +15,7 @@ const Dashboard = () => {
       <Navbar />
 
       {/* Main content */}
-      <main className="flex-1 md:ml-64 h-screen overflow-y-auto p-5 text-gray-900">
+      <main className="flex-1 md:ml-64 h-screen overflow-y-auto p-2 md:p-5 text-gray-900">
         <Outlet />
       </main>
     </div>

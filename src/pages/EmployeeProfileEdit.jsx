@@ -55,7 +55,7 @@ const EmployeeProfileEdit = () => {
   }
 
   return (
-    <div className="overflow-x-auto p-5">
+    <div className="overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold mb-1">
           Edit {employeeData.first_name} {employeeData.last_name}

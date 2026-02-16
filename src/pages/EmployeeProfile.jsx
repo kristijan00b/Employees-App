@@ -168,7 +168,7 @@ const EmployeeProfile = () => {
     return <p className="text-center mt-10">Employee not found</p>;
 
   return (
-    <div className="overflow-x-auto p-5">
+    <div className="overflow-x-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold mb-1">
