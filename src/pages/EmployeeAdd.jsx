@@ -97,7 +97,7 @@ const EmployeeAdd = () => {
           to="/dashboard/employees-list"
           className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
         >
-          Back to Employees List
+        Employees List
         </Link>
       </div>
 

@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
 
-const Sidebar = () => {
+const Sidebar = ({ onLinkClick }) => {
   const location = useLocation();
   const { logOutUser } = UserAuth();
 
@@ -13,8 +13,12 @@ const Sidebar = () => {
         : "text-gray-300 hover:bg-gray-800 hover:text-white"
     }`;
 
+  const handleLinkClick = () => {
+    if (onLinkClick) onLinkClick();
+  };
+
   return (
-    <aside className="w-60 min-h-screen bg-gray-900 text-white flex flex-col">
+    <aside className="flex flex-col h-full">
       <div className="flex justify-center p-5 border-b border-gray-800">
         <img
           src="https://cdn-icons-png.freepik.com/512/622/622850.png"
@@ -22,16 +26,19 @@ const Sidebar = () => {
           className="h-20"
         />
       </div>
+
       <nav className="flex-1 p-3 space-y-2">
         <Link
           to="/dashboard/employees-list"
           className={linkClass("/dashboard/employees-list")}
+          onClick={handleLinkClick}
         >
           Employees List
         </Link>
         <Link
           to="/dashboard/employee-add"
           className={linkClass("/dashboard/employee-add")}
+          onClick={handleLinkClick}
         >
           Add Employee
         </Link>
