@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "../../supabaseClient";
+import { supabase } from "../supabaseClient";
 import { useParams, useNavigate } from "react-router-dom";
 
 const EmployeeProfileEdit = () => {
@@ -79,78 +79,85 @@ const EmployeeProfileEdit = () => {
         </div>
       </div>
       <div className="mb-5">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-gray-500 text-xs">First Name</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col">
+            <p className="text-gray-500 text-xs mb-1">First Name</p>
             <input
               name="first_name"
               value={employeeData.first_name}
               onChange={handleChange}
-              className="input bg-white p-2 rounded-md max-w-80 shadow"
+              className="bg-white p-2 rounded-md w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
           </div>
-          <div>
-            <p className="text-gray-500 text-xs">Last Name</p>
+
+          <div className="flex flex-col">
+            <p className="text-gray-500 text-xs mb-1">Last Name</p>
             <input
               name="last_name"
               value={employeeData.last_name}
               onChange={handleChange}
-              className="input bg-white p-2 rounded-md max-w-80 shadow"
+              className="bg-white p-2 rounded-md w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
           </div>
-          <div>
-            <p className="text-gray-500 text-xs">E-mail</p>
+
+          <div className="flex flex-col">
+            <p className="text-gray-500 text-xs mb-1">E-mail</p>
             <input
               name="email"
               value={employeeData.email}
               onChange={handleChange}
-              className="input bg-white p-2 rounded-md max-w-80 shadow"
+              className="bg-white p-2 rounded-md w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
           </div>
-          <div>
-            <p className="text-gray-500 text-xs">Phone</p>
+
+          <div className="flex flex-col">
+            <p className="text-gray-500 text-xs mb-1">Phone</p>
             <input
               name="phone"
               value={employeeData.phone}
               onChange={handleChange}
-              className="input bg-white p-2 rounded-md max-w-80 shadow"
+              className="bg-white p-2 rounded-md w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
           </div>
-          <div>
-            <p className="text-gray-500 text-xs">Country</p>
+
+          <div className="flex flex-col">
+            <p className="text-gray-500 text-xs mb-1">Country</p>
             <input
               name="country"
               value={employeeData.country}
               onChange={handleChange}
-              className="input bg-white p-2 rounded-md max-w-80 shadow"
+              className="bg-white p-2 rounded-md w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
           </div>
-          <div>
-            <p className="text-gray-500 text-xs">City</p>
+
+          <div className="flex flex-col">
+            <p className="text-gray-500 text-xs mb-1">City</p>
             <input
               name="city"
               value={employeeData.city}
               onChange={handleChange}
-              className="input bg-white p-2 rounded-md max-w-80 shadow"
+              className="bg-white p-2 rounded-md w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
           </div>
-          <div>
-            <p className="text-gray-500 text-xs">Address</p>
+
+          <div className="flex flex-col">
+            <p className="text-gray-500 text-xs mb-1">Address</p>
             <input
               name="address"
               value={employeeData.address}
               onChange={handleChange}
-              className="input bg-white p-2 rounded-md max-w-80 shadow"
+              className="bg-white p-2 rounded-md w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
           </div>
-          <div>
-            <p className="text-gray-500 text-xs">Born Date</p>
+
+          <div className="flex flex-col">
+            <p className="text-gray-500 text-xs mb-1">Born Date</p>
             <input
               type="date"
               name="born_date"
               value={employeeData.born_date}
               onChange={handleChange}
-              className="input bg-white p-2 rounded-md max-w-80 shadow"
+              className="bg-white p-2 rounded-md w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
           </div>
         </div>

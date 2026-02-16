@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { supabase } from "../../supabaseClient";
+import { supabase } from "../supabaseClient";
 import { Link } from "react-router-dom";
 
 const EmployeesList = () => {
@@ -169,7 +169,7 @@ const EmployeesList = () => {
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
-          {'<<'} Previous
+          {"<<"} Previous
         </button>
 
         <span className="px-3 py-1">
@@ -189,7 +189,7 @@ const EmployeesList = () => {
           }
           disabled={currentPage === totalPages}
         >
-          Next {'>>'}
+          Next {">>"}
         </button>
       </div>
     </div>

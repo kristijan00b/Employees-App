@@ -3,10 +3,10 @@ import App from "./App";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
 import PrivateRoutes from "./components/PrivateRoutes";
-import EmployeesList from "./components/pages/EmployeesList";
-import EmployeeAdd from "./components/pages/EmployeeAdd";
-import EmployeeProfile from "./components/pages/EmployeeProfile";
-import EmployeeProfileEdit from "./components/pages/EmployeeProfileEdit";
+import EmployeesList from "./pages/EmployeesList";
+import EmployeeAdd from "./pages/EmployeeAdd";
+import EmployeeProfile from "./pages/EmployeeProfile";
+import EmployeeProfileEdit from "./pages/EmployeeProfileEdit";
 
 export const router = createBrowserRouter([
   {

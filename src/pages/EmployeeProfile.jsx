@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
+import { supabase } from "../supabaseClient";
+import RequestTimeOff from "../components/RequestTimeOff";
 
 const EmployeeProfile = () => {
   const { employeeId } = useParams();
@@ -107,7 +108,7 @@ const EmployeeProfile = () => {
       </div>
 
       {/* Contact Info */}
-      <div>
+      <div className="mb-5">
         <h3 className="text-xl font-semibold mb-3 pb-1 pl-3 bg-blue-500 text-white rounded-md">
           Contact Info
         </h3>
@@ -134,6 +135,25 @@ const EmployeeProfile = () => {
             <p className="text-gray-500 text-xs">Address</p>
             <p className="text-gray-900 font-medium">{employeeData.address}</p>
           </div>
+        </div>
+      </div>
+      {/* PTO Info */}
+      <div className="mb-5">
+        <h3 className="text-xl font-semibold mb-3 pb-1 pl-3 bg-blue-500 text-white rounded-md">
+          PTO
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+          <div>
+            <p className="text-gray-500 text-xs">Annually days off</p>
+            <p className="text-gray-900 font-medium">{employeeData.pto}</p>
+          </div>
+          <div>
+            <p className="text-gray-500 text-xs">Available days off</p>
+            <p className="text-gray-900 font-medium">{employeeData.pto}</p>
+          </div>
+        </div>
+        <div>
+          <RequestTimeOff employeeId={employeeData.id} />
         </div>
       </div>
     </div>

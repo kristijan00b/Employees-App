@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "../../supabaseClient";
+import { supabase } from "../supabaseClient";
 import { Link, useNavigate } from "react-router-dom";
 
 const EmployeeAdd = () => {
@@ -12,6 +12,8 @@ const EmployeeAdd = () => {
   const [address, setAddress] = useState("");
   const [bornDate, setBornDate] = useState("");
   const [startWorkData, setStartWorkData] = useState("");
+  const [pto, setPto] = useState(0);
+  const [ptoSpent, setPtoSpent] = useState(0);
   const [selectedWorkStatus, setSelectedWorkStatus] = useState("");
   const [selectedPosition, setSelectedPosition] = useState("");
 
@@ -33,6 +35,8 @@ const EmployeeAdd = () => {
       address: address,
       born_date: bornDate,
       start_work_date: startWorkData,
+      pto: pto,
+      pto_spent: ptoSpent,
       work_status_id: selectedWorkStatus,
       position_id: selectedPosition,
     };
@@ -198,12 +202,24 @@ const EmployeeAdd = () => {
               />
             </div>
 
-            <div className="md:col-span-2">
+            <div>
               <label className="block text-gray-700 mb-1">Address</label>
               <input
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Gavrila Principa 1"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-1">Annually days off</label>
+              <input
+                type="number"
+                value={pto}
+                min={0}
+                max={50}
+                onChange={(e) => setPto(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Gavrila Principa 1"
               />
