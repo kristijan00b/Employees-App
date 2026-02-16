@@ -9,6 +9,7 @@ const EmployeeProfile = () => {
   const [submitting, setSubmitting] = useState(false); // za PTO submit
   const [ptos, setPtos] = useState([]);
   const [spentPto, setSpentPto] = useState(0);
+  const [salaryData, setSalaryData] = useState(null);
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -54,6 +55,20 @@ const EmployeeProfile = () => {
       }, 0);
 
       setSpentPto(spentPto);
+    }
+  };
+
+  const fetchSalary = async () => {
+    const { data, error } = await supabase
+      .from("Salary")
+      .select("amount, SalaryType(name)")
+      .eq("employee_id", employeeId)
+      .single(); // pretpostavljamo da je samo jedan aktivan salary po zaposlenom
+
+    if (error) {
+      console.log("Error fetching salary:", error);
+    } else {
+      setSalaryData(data);
     }
   };
 
@@ -161,6 +176,7 @@ const EmployeeProfile = () => {
   useEffect(() => {
     fetchPtos();
     fetchEmployee();
+    fetchSalary();
   }, [employeeId]);
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
@@ -234,6 +250,20 @@ const EmployeeProfile = () => {
             <p className="text-gray-500 text-xs">Position</p>
             <p className="text-gray-900 font-medium">
               {employeeData.Position?.name}
+            </p>
+          </div>
+          <div>
+            <p className="text-gray-500 text-xs">Salary Type</p>
+            <p className="text-gray-900 font-medium">
+              {salaryData?.SalaryType?.name || "-"}
+            </p>
+          </div>
+          <div>
+            <p className="text-gray-500 text-xs">Salary Amount</p>
+            <p className="text-gray-900 font-medium">
+              {salaryData?.amount != null
+                ? `${salaryData.amount.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} RSD`
+                : "-"}
             </p>
           </div>
         </div>

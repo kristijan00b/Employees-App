@@ -13,9 +13,11 @@ const EmployeeAdd = () => {
   const [bornDate, setBornDate] = useState("");
   const [startWorkData, setStartWorkData] = useState("");
   const [pto, setPto] = useState(0);
-  const [ptoSpent, setPtoSpent] = useState(0);
   const [selectedWorkStatus, setSelectedWorkStatus] = useState("");
   const [selectedPosition, setSelectedPosition] = useState("");
+  const [selectedSalaryType, setSelectedSalaryType] = useState("");
+  const [salaryAmount, setSalaryAmount] = useState("");
+  const [salaryTypes, setSalaryTypes] = useState([]); // iz baze salaryType
 
   const [workStatuses, setWorkStatuses] = useState([]);
   const [positions, setPositions] = useState([]);
@@ -23,38 +25,42 @@ const EmployeeAdd = () => {
   const [successMessageEmployee, setSuccessMessageEmployee] = useState(null);
 
   const addNewEmployee = async (e) => {
-    console.log("BD: ", bornDate);
-    e.preventDefault(); //stopin reload on submit form
-    const newEmployeeData = {
-      first_name: firstName,
-      last_name: lastName,
-      email: email,
-      phone: phone,
-      country: country,
-      city: city,
-      address: address,
-      born_date: bornDate,
-      start_work_date: startWorkData,
-      pto: pto,
-      pto_spent: ptoSpent,
-      work_status_id: selectedWorkStatus,
-      position_id: selectedPosition,
-    };
+  e.preventDefault();
 
-    const { data, error } = await supabase
+  const newEmployeeData = {
+    first_name: firstName,
+    last_name: lastName,
+    email: email,
+    phone: phone,
+    country: country,
+    city: city,
+    address: address,
+    born_date: bornDate,
+    start_work_date: startWorkData,
+    pto: pto,
+    work_status_id: selectedWorkStatus,
+    position_id: selectedPosition,
+  };
+
+  try {
+    // 1️⃣ Dodaj zaposlenog
+    const { data: employeeData, error: empError } = await supabase
       .from("Employee")
       .insert([newEmployeeData])
+      .select()
       .single();
 
-    if (error) {
-      console.log("Insert employee data error ", error);
-    } else {
-      console.log("New employee", data);
-      setSuccessMessageEmployee({ firstName, lastName });
-      setTimeout(() => {
-        setSuccessMessageEmployee(null);
-      }, 3000);
+    if (empError) {
+      console.log("Insert employee error:", empError);
+      return;
     }
+
+    // 2️⃣ Pozovi funkciju za salary sa ID-em novog zaposlenog
+    await addSalary(employeeData.id, selectedSalaryType, salaryAmount, startWorkData);
+
+    // 3️⃣ Poruka i reset polja
+    setSuccessMessageEmployee({ firstName, lastName });
+    setTimeout(() => setSuccessMessageEmployee(null), 3000);
 
     setFirstName("");
     setLastName("");
@@ -67,6 +73,34 @@ const EmployeeAdd = () => {
     setStartWorkData("");
     setSelectedWorkStatus("");
     setSelectedPosition("");
+    setSelectedSalaryType("");
+    setSalaryAmount("");
+    setPto(0);
+
+  } catch (error) {
+    console.log("Unexpected error:", error);
+  }
+};
+
+
+  const addSalary = async (employeeId, salaryTypeId, amount) => {
+    try {
+      const { data, error } = await supabase.from("Salary").insert([
+        {
+          employee_id: employeeId,
+          salary_type_id: salaryTypeId,
+          amount: parseFloat(amount),
+        },
+      ]);
+
+      if (error) {
+        console.log("Insert salary error:", error);
+      } else {
+        console.log("Salary added:", data);
+      }
+    } catch (err) {
+      console.log("Unexpected salary error:", err);
+    }
   };
 
   const fetchDropdownData = async () => {
@@ -78,11 +112,17 @@ const EmployeeAdd = () => {
       .from("Position")
       .select("*");
 
+    const { data: salaryTypeData, error: salaryTypeError } = await supabase
+      .from("SalaryType")
+      .select("*");
+
     if (wsError) console.log("WorkStatus error:", wsError);
     if (posError) console.log("Position error:", posError);
+    if (salaryTypeError) console.log("SalaryType error:", salaryTypeError);
 
     setWorkStatuses(workStatusData || []);
     setPositions(positionData || []);
+    setSalaryTypes(salaryTypeData || []);
   };
 
   useEffect(() => {
@@ -97,7 +137,7 @@ const EmployeeAdd = () => {
           to="/dashboard/employees-list"
           className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
         >
-        Employees List
+          Employees List
         </Link>
       </div>
 
@@ -259,6 +299,37 @@ const EmployeeAdd = () => {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-700 mb-1">Salary Type</label>
+              <select
+                value={selectedSalaryType}
+                onChange={(e) => setSelectedSalaryType(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                <option value="">--</option>
+                {salaryTypes.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-700 mb-1">Salary Amount</label>
+              <input
+                type="number"
+                value={salaryAmount}
+                onChange={(e) => setSalaryAmount(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter Amount"
+                required
+                min="0"
+                max="999999"
+              />
             </div>
           </div>
 
