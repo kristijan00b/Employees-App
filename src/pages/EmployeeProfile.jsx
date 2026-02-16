@@ -297,7 +297,7 @@ const EmployeeProfile = () => {
               </label>
               <input
                 type="date"
-                className="w-full px-3 py-2 shadow rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-white shadow rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 required
@@ -310,7 +310,7 @@ const EmployeeProfile = () => {
               </label>
               <input
                 type="date"
-                className="w-full px-3 py-2 shadow rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-white shadow rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 required
@@ -355,7 +355,7 @@ const EmployeeProfile = () => {
               return (
                 <div
                   key={pto.id}
-                  className="relative border border-gray-300 rounded-lg p-4 shadow hover:shadow-md transition"
+                  className="relative bg-white shadow rounded-lg p-4 transition"
                 >
                   {/* Dugme X */}
                   <button
