@@ -101,8 +101,8 @@ const EmployeesList = () => {
         </div>
       </div>
 
-      <div className="hidden md:block overflow-x-auto">
-        <table className="min-w-full border border-gray-200 shadow-lg">
+      <div className="hidden md:block overflow-x-auto shadow">
+        <table className="min-w-full border border-gray-200">
           <thead className="bg-blue-500 text-white">
             <tr>
               <th className="px-4 py-2 text-left">#</th>

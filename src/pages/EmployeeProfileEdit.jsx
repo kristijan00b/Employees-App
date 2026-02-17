@@ -117,7 +117,7 @@ const EmployeeProfileEdit = () => {
     <div className="overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold mb-1">
-          Edit {employeeData.first_name} {employeeData.last_name}
+          <span className="text-xl font-normal">Edit</span> {employeeData.first_name} {employeeData.last_name}
         </h2>
         <div>
           <div className="flex justify-end gap-3">
@@ -132,7 +132,7 @@ const EmployeeProfileEdit = () => {
               onClick={handleUpdate}
               className="hover:cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
             >
-              Save Changes
+              Save
             </button>
           </div>
         </div>
