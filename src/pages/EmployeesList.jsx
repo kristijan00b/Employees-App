@@ -158,41 +158,6 @@ const EmployeesList = () => {
             ))}
           </tbody>
         </table>
-        <div className="flex justify-center mt-4 space-x-2">
-          <button
-            className={`px-3 py-1 rounded 
-                      ${
-                        currentPage === 1
-                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                          : "bg-gray-200 hover:bg-gray-300 hover:cursor-pointer"
-                      }
-                    `}
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            {"<<"} Previous
-          </button>
-
-          <span className="px-3 py-1">
-            Page {currentPage} of {totalPages}
-          </span>
-
-          <button
-            className={`px-3 py-1 rounded 
-                      ${
-                        currentPage === totalPages
-                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                          : "bg-gray-200 hover:bg-gray-300 hover:cursor-pointer"
-                      }
-                    `}
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            disabled={currentPage === totalPages}
-          >
-            Next {">>"}
-          </button>
-        </div>
       </div>
 
       <div className="md:hidden space-y-3">
@@ -226,6 +191,41 @@ const EmployeesList = () => {
             </Link>
           </div>
         ))}
+      </div>
+      <div className="flex justify-center mt-4 space-x-2">
+        <button
+          className={`px-3 py-1 rounded 
+                      ${
+                        currentPage === 1
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-gray-200 hover:bg-gray-300 hover:cursor-pointer"
+                      }
+                    `}
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          {"<<"} Previous
+        </button>
+
+        <span className="px-3 py-1">
+          Page {currentPage} of {totalPages}
+        </span>
+
+        <button
+          className={`px-3 py-1 rounded 
+                      ${
+                        currentPage === totalPages
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-gray-200 hover:bg-gray-300 hover:cursor-pointer"
+                      }
+                    `}
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+        >
+          Next {">>"}
+        </button>
       </div>
     </div>
   );
