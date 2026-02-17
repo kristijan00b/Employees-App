@@ -77,6 +77,13 @@ const Navbar = () => {
           >
             Add Employee
           </Link>
+          <Link
+            to="/dashboard/check-came"
+            className={linkClass("/dashboard/check-came")}
+            onClick={handleLinkClick}
+          >
+            Check Came
+          </Link>
 
           <button
             onClick={logOutUser}

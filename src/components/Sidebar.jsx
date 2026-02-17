@@ -42,6 +42,13 @@ const Sidebar = ({ onLinkClick }) => {
         >
           Add Employee
         </Link>
+        <Link
+          to="/dashboard/check-came"
+          className={linkClass("/dashboard/check-came")}
+          onClick={handleLinkClick}
+        >
+          Check Came
+        </Link>
       </nav>
 
       <div className="p-3 border-t border-gray-800">

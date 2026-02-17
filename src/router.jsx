@@ -7,6 +7,7 @@ import EmployeesList from "./pages/EmployeesList";
 import EmployeeAdd from "./pages/EmployeeAdd";
 import EmployeeProfile from "./pages/EmployeeProfile";
 import EmployeeProfileEdit from "./pages/EmployeeProfileEdit";
+import CheckCame from "./pages/CheckCame";
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
       {
         path: "employee-profile/:employeeId/edit",
         element: <EmployeeProfileEdit />,
+      },
+      {
+        path: "check-came",
+        element: <CheckCame />,
       },
     ],
   },
