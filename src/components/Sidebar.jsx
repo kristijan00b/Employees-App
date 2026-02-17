@@ -49,6 +49,20 @@ const Sidebar = ({ onLinkClick }) => {
         >
           Check Came
         </Link>
+        <Link
+          to="/dashboard/came-history"
+          className={linkClass("/dashboard/came-history")}
+          onClick={handleLinkClick}
+        >
+          Came History
+        </Link>
+        <Link
+          to="/dashboard/shifts"
+          className={linkClass("/dashboard/shifts")}
+          onClick={handleLinkClick}
+        >
+          Shifts
+        </Link>
       </nav>
 
       <div className="p-3 border-t border-gray-800">

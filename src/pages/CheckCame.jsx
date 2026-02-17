@@ -102,7 +102,7 @@ const CheckCame = () => {
   return (
     <div className="min-h-screen">
       <div className="mb-2">
-        <h2 className="text-2xl font-bold">
+        <h2 className="text-xl font-bold">
           Date: <span className="text-2xl font-normal">{formattedDate}</span>
         </h2>
       </div>
