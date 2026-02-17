@@ -204,7 +204,7 @@ const EmployeesList = () => {
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
-          {"<<"} Previous
+          {"<<"} Prev
         </button>
 
         <span className="px-3 py-1">
