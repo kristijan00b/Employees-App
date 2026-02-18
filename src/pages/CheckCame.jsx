@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
 const CheckCame = () => {
-  const [employeeList, setEmployeesList] = useState([]);
-  const [todayChecks, setTodayChecks] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [today, setToday] = useState(new Date().toISOString().split("T")[0]);
 
   const formattedDate = new Date(today).toLocaleDateString("en-US", {
@@ -13,186 +12,102 @@ const CheckCame = () => {
     day: "numeric",
   });
 
-  const fetchEmployees = async () => {
+  // 🔹 Jedan fetch – Employee + današnji CheckCame
+  const fetchData = async () => {
     const { data, error } = await supabase
       .from("Employee")
-      .select("*")
+      .select(
+        `
+        id,
+        first_name,
+        last_name,
+        CheckCame (
+          id,
+          came,
+          day,
+          ShiftType (
+          id,
+          name)
+        )
+      `,
+      )
+      .eq("CheckCame.day", today)
       .order("id", { ascending: true });
 
-    if (error) {
-      console.log("Error fetching employees", error);
-    } else {
-      setEmployeesList(data);
-    }
+    if (!error) setEmployees(data);
   };
 
-  const fetchTodayChecks = async () => {
-    const { data, error } = await supabase
-      .from("CheckCame")
-      .select("*, Employee(*)")
-      .eq("day", today)
-      .order("employee_id", { ascending: true });
-
-    if (error) {
-      console.log("Error fetching today checks", error);
-    } else {
-      setTodayChecks(data);
-    }
-  };
-
-  const handleCheck = async (employeeId, came) => {
-    const today = new Date().toISOString().split("T")[0];
-
-    const { error } = await supabase.from("CheckCame").insert([
-      {
-        day: today,
-        employee_id: employeeId,
-        came: came,
-      },
-    ]);
-
-    if (error) {
-      console.log("Error inserting check", error);
-    } else {
-      fetchTodayChecks();
-    }
-  };
-
-  const handleUpdate = async (id, came) => {
+  // 🔹 Update status
+  const handleUpdate = async (checkId, came) => {
     const { error } = await supabase
       .from("CheckCame")
-      .update({ came: came })
-      .eq("id", id);
+      .update({ came })
+      .eq("id", checkId);
 
-    if (error) {
-      console.log("Error updating", error);
-    } else {
-      fetchTodayChecks();
-    }
+    if (!error) fetchData();
   };
 
-  // 1️⃣ Učitaj zaposlene samo jednom
   useEffect(() => {
-    fetchEmployees();
-  }, []);
-
-  // 2️⃣ Učitaj današnje čekirane kad god se promeni datum
-  useEffect(() => {
-    fetchTodayChecks();
-  }, [today]);
-
-  // 3️⃣ Timer do ponoći
-  useEffect(() => {
-    const now = new Date();
-
-    const tomorrow = new Date();
-    tomorrow.setDate(now.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-
-    const msUntilMidnight = tomorrow - now;
-
-    const timeout = setTimeout(() => {
-      const newToday = new Date().toISOString().split("T")[0];
-      setToday(newToday);
-    }, msUntilMidnight);
-
-    return () => clearTimeout(timeout);
+    fetchData();
   }, [today]);
 
   return (
-    <div className="min-h-screen">
-      <div className="mb-2">
-        <h2 className="text-xl font-bold">
-          Date: <span className="text-2xl font-normal">{formattedDate}</span>
-        </h2>
-      </div>
+    <div className="min-h-screen p-6 bg-gray-100">
+      <h2 className="text-xl font-bold mb-4">
+        Date: <span className="text-2xl font-normal">{formattedDate}</span>
+      </h2>
 
-      {/* PENDING SECTION */}
-      <h3 className="text-md font-semibold mb-3 pl-3 bg-blue-500 text-white rounded-md">
-        Pending
-      </h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {employees.map((emp) => {
+          const check = emp.CheckCame?.[0]; // jer filtriramo po danu
+          const hasShift = check && check.ShiftType?.id !== 4; // ili ako 
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
-        {employeeList
-          .filter(
-            (emp) => !todayChecks.some((check) => check.employee_id === emp.id),
-          )
-          .map((employee) => (
+          return (
             <div
-              key={employee.id}
+              key={emp.id}
               className="bg-white shadow-md rounded-xl p-4 flex justify-between items-center hover:shadow-lg transition"
             >
               <div>
                 <p className="font-medium">
-                  <span className="text-xs text-gray-500">{employee.id} </span>
-                  {employee.first_name} {employee.last_name}
+                  <span className="text-xs text-gray-500">{emp.id} </span>
+                  {emp.first_name} {emp.last_name}
+                </p>
+
+                <p className="text-sm text-gray-500">
+                  Status:{" "}
+                  <span
+                    className={`font-semibold ${
+                      check?.came ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    {check?.came ? "YES" : "NO"}
+                  </span>
+                </p>
+                <p className="text-sm text-gray-500">
+                  Shift: {emp.CheckCame?.[0]?.ShiftType?.name || "-"}
                 </p>
               </div>
 
               <div className="flex gap-2">
                 <button
-                  className="hover:cursor-pointer bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg transition"
-                  onClick={() => handleCheck(employee.id, true)}
+                  disabled={!hasShift}
+                  className="hover:cursor-pointer bg-green-500 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-green-600 text-white px-3 py-1 rounded-lg transition"
+                  onClick={() => handleUpdate(check.id, true)}
                 >
                   Yes
                 </button>
+
                 <button
-                  className="hover:cursor-pointer bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition"
-                  onClick={() => handleCheck(employee.id, false)}
+                  disabled={!hasShift}
+                  className="hover:cursor-pointer bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-600 text-white px-3 py-1 rounded-lg transition"
+                  onClick={() => handleUpdate(check.id, false)}
                 >
                   No
                 </button>
               </div>
             </div>
-          ))}
-      </div>
-
-      {/* TODAY CHECKED SECTION */}
-      <h3 className="text-md font-semibold mb-3 pl-3 bg-blue-500 text-white rounded-md">
-        Checked
-      </h3>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {todayChecks.map((check) => (
-          <div
-            key={check.id}
-            className="bg-white shadow-md rounded-xl p-4 flex justify-between items-center hover:shadow-lg transition"
-          >
-            <div>
-              <p className="font-medium">
-                <span className="text-xs text-gray-500">
-                  {check.Employee.id}{" "}
-                </span>
-                {check.Employee.first_name} {check.Employee.last_name}
-              </p>
-              <p className="text-sm text-gray-500">
-                Status:{" "}
-                <span
-                  className={`font-semibold ${
-                    check.came ? "text-green-600" : "text-red-600"
-                  }`}
-                >
-                  {check.came ? "YES" : "NO"}
-                </span>
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                className="hover:cursor-pointer bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg transition"
-                onClick={() => handleUpdate(check.id, true)}
-              >
-                Yes
-              </button>
-              <button
-                className="hover:cursor-pointer bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition"
-                onClick={() => handleUpdate(check.id, false)}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
