@@ -146,7 +146,7 @@ const Shifts = () => {
               </div>
 
               <select
-                className="hover:cursor-pointer border px-2 py-1 rounded"
+                className="hover:cursor-pointer shadow px-2 py-1 rounded"
                 value={assignment?.shift || ""}
                 onChange={(e) =>
                   handleShiftChange(emp.id, Number(e.target.value))
