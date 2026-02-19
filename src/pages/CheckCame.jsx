@@ -70,7 +70,7 @@ const fetchData = async () => {
   }, [today]);
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
       <h2 className="text-xl font-bold mb-4">
         Date: <span className="text-2xl font-normal">{formattedDate}</span>
       </h2>
