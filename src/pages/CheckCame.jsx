@@ -13,29 +13,47 @@ const CheckCame = () => {
   });
 
   // 🔹 Jedan fetch – Employee + današnji CheckCame
-  const fetchData = async () => {
-    const { data, error } = await supabase
-      .from("Employee")
-      .select(
-        `
+const fetchData = async () => {
+  const { data, error } = await supabase
+    .from("Employee")
+    .select(`
+      id,
+      first_name,
+      last_name,
+      CheckCame (
         id,
-        first_name,
-        last_name,
-        CheckCame (
+        came,
+        day,
+        ShiftType (
           id,
-          came,
-          day,
-          ShiftType (
-          id,
-          name)
+          name
         )
-      `,
       )
-      .eq("CheckCame.day", today)
-      .order("id", { ascending: true });
+    `)
+    .eq("CheckCame.day", today);
 
-    if (!error) setEmployees(data);
-  };
+  if (!error && data) {
+    const sorted = [...data].sort((a, b) => {
+      // 1️⃣ Shift ID - null/undefined na kraju
+      const shiftA = a.CheckCame?.[0]?.ShiftType?.id;
+      const shiftB = b.CheckCame?.[0]?.ShiftType?.id;
+
+      if (shiftA == null && shiftB != null) return 1;  // A na kraj
+      if (shiftB == null && shiftA != null) return -1; // B na kraj
+      if (shiftA != null && shiftB != null && shiftA !== shiftB) return shiftA - shiftB;
+
+      // 2️⃣ came true/false
+      const cameA = a.CheckCame?.[0]?.came ? 1 : 0;
+      const cameB = b.CheckCame?.[0]?.came ? 1 : 0;
+      if (cameA !== cameB) return cameB - cameA; // true pre false
+
+      // 3️⃣ employee id
+      return a.id - b.id;
+    });
+
+    setEmployees(sorted);
+  }
+};
 
   // 🔹 Update status
   const handleUpdate = async (checkId, came) => {
@@ -60,7 +78,7 @@ const CheckCame = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {employees.map((emp) => {
           const check = emp.CheckCame?.[0]; // jer filtriramo po danu
-          const hasShift = check && check.ShiftType?.id !== 4; // ili ako 
+          const hasShift = check && check.ShiftType?.id !== 4; // ili ako
 
           return (
             <div
@@ -88,23 +106,23 @@ const CheckCame = () => {
                 </p>
               </div>
 
-              <div className="flex gap-2">
-                <button
-                  disabled={!hasShift}
-                  className="hover:cursor-pointer bg-green-500 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-green-600 text-white px-3 py-1 rounded-lg transition"
-                  onClick={() => handleUpdate(check.id, true)}
-                >
-                  Yes
-                </button>
+              {hasShift && (
+                <div className="flex gap-2">
+                  <button
+                    className="hover:cursor-pointer bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg transition"
+                    onClick={() => handleUpdate(check.id, true)}
+                  >
+                    Yes
+                  </button>
 
-                <button
-                  disabled={!hasShift}
-                  className="hover:cursor-pointer bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-600 text-white px-3 py-1 rounded-lg transition"
-                  onClick={() => handleUpdate(check.id, false)}
-                >
-                  No
-                </button>
-              </div>
+                  <button
+                    className="hover:cursor-pointer bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition"
+                    onClick={() => handleUpdate(check.id, false)}
+                  >
+                    No
+                  </button>
+                </div>
+              )}
             </div>
           );
         })}

@@ -106,7 +106,7 @@ const Shifts = () => {
 
   // ---------------- RENDER ----------------
   return (
-    <div className="bg-gray-100 min-h-screen p-6">
+    <div className="bg-gray-100 min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">{formattedDate}</h2>
@@ -139,14 +139,17 @@ const Shifts = () => {
           return (
             <div
               key={emp.id}
-              className="bg-white shadow-md rounded-xl p-4 flex justify-between items-center"
+              className={`
+       shadow-md rounded-xl p-4 flex justify-between items-center
+      ${assignment?.shift ? "bg-green-100" : "bg-white"}
+    `}
             >
               <div>
                 {emp.id} {emp.first_name} {emp.last_name}
               </div>
 
               <select
-                className="hover:cursor-pointer shadow px-2 py-1 rounded"
+                className="hover:cursor-pointer shadow px-2 py-1 rounded bg-white"
                 value={assignment?.shift || ""}
                 onChange={(e) =>
                   handleShiftChange(emp.id, Number(e.target.value))
