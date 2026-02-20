@@ -74,6 +74,52 @@ const Shifts = () => {
     );
   }, [shiftAssignments]);
 
+  const sortedEmployees = useMemo(() => {
+    return [...employees].sort((a, b) => {
+      const aKey = `${a.id}_${currentDay}`;
+      const bKey = `${b.id}_${currentDay}`;
+
+      const aAssignment = assignmentMap[aKey];
+      const bAssignment = assignmentMap[bKey];
+
+      const aHasShift = !!aAssignment?.shift;
+      const bHasShift = !!bAssignment?.shift;
+
+      // 1️⃣ Prvo: oni bez smene idu prvi
+      if (aHasShift !== bHasShift) {
+        return Number(aHasShift) - Number(bHasShift);
+      }
+
+      // 2️⃣ Ako oboje imaju smenu → sortiraj po shift ID
+      if (aHasShift && bHasShift) {
+        if (aAssignment.shift !== bAssignment.shift) {
+          return aAssignment.shift - bAssignment.shift;
+        }
+      }
+
+      // 3️⃣ Ako je ista smena (ili oboje bez smene) → po employee id
+      return a.id - b.id;
+    });
+  }, [employees, assignmentMap, currentDay]);
+
+  const shiftStats = useMemo(() => {
+    let assigned = 0;
+    let unassigned = 0;
+
+    employees.forEach((emp) => {
+      const key = `${emp.id}_${currentDay}`;
+      const hasShift = !!assignmentMap[key]?.shift;
+
+      if (hasShift) {
+        assigned++;
+      } else {
+        unassigned++;
+      }
+    });
+
+    return { assigned, unassigned };
+  }, [employees, assignmentMap, currentDay]);
+
   // ---------------- SHIFT CHANGE ----------------
   const handleShiftChange = async (employeeId, shiftId) => {
     if (!shiftId) return; // safety check da ne šalje "" ili null
@@ -109,7 +155,10 @@ const Shifts = () => {
     <div className="bg-gray-100 min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">{formattedDate}</h2>
+        <div>
+          <h2 className="text-xl font-bold">Daily Shift Assignment</h2>
+          <h2 className="text-2xl font-normal">{formattedDate}</h2>
+        </div>
         <div className="flex gap-2">
           <button
             className="hover:cursor-pointer bg-gray-300 px-3 py-1 rounded hover:bg-gray-400"
@@ -127,12 +176,18 @@ const Shifts = () => {
       </div>
 
       {/* Employees List */}
-      <h3 className="text-md font-semibold mb-4 pl-3 bg-blue-500 text-white rounded-md">
-        Daily Shift Assignment
-      </h3>
+      <div className="mb-3 flex gap-4">
+        <div className="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-semibold shadow">
+          Assigned shifts: {shiftStats.assigned}
+        </div>
+
+        <div className="bg-white text-gray-800 px-4 py-2 rounded-lg font-semibold shadow">
+          Unassigned shifts: {shiftStats.unassigned}
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {employees.map((emp) => {
+        {sortedEmployees.map((emp) => {
           const key = `${emp.id}_${currentDay}`;
           const assignment = assignmentMap[key];
 

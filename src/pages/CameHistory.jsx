@@ -64,9 +64,10 @@ const CameHistory = () => {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         {/* Datum levo */}
-        <h2 className="text-xl font-bold">
-          Date: <span className="text-2xl font-normal">{formattedDate}</span>
-        </h2>
+        <div>
+          <h2 className="text-xl font-bold">Daily Check Came History</h2>
+          <h2 className="text-2xl font-normal">{formattedDate}</h2>
+        </div>
 
         {/* Dugmici desno */}
         <div className="flex gap-2">
@@ -112,7 +113,10 @@ const CameHistory = () => {
                   <span className="font-normal">{index + 1}</span>{" "}
                   <span className="font-bold">
                     {emp.first_name} {emp.last_name}
-                    <span className="font-normal text-sm text-gray-500"> {emp.id} {emp.Position?.name}</span>
+                    <span className="font-normal text-sm text-gray-500">
+                      {" "}
+                      {emp.id} {emp.Position?.name}
+                    </span>
                   </span>
                 </div>
                 <div

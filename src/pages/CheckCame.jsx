@@ -13,10 +13,11 @@ const CheckCame = () => {
   });
 
   // 🔹 Jedan fetch – Employee + današnji CheckCame
-const fetchData = async () => {
-  const { data, error } = await supabase
-    .from("Employee")
-    .select(`
+  const fetchData = async () => {
+    const { data, error } = await supabase
+      .from("Employee")
+      .select(
+        `
       id,
       first_name,
       last_name,
@@ -29,31 +30,33 @@ const fetchData = async () => {
           name
         )
       )
-    `)
-    .eq("CheckCame.day", today);
+    `,
+      )
+      .eq("CheckCame.day", today);
 
-  if (!error && data) {
-    const sorted = [...data].sort((a, b) => {
-      // 1️⃣ Shift ID - null/undefined na kraju
-      const shiftA = a.CheckCame?.[0]?.ShiftType?.id;
-      const shiftB = b.CheckCame?.[0]?.ShiftType?.id;
+    if (!error && data) {
+      const sorted = [...data].sort((a, b) => {
+        // 1️⃣ Shift ID - null/undefined na kraju
+        const shiftA = a.CheckCame?.[0]?.ShiftType?.id;
+        const shiftB = b.CheckCame?.[0]?.ShiftType?.id;
 
-      if (shiftA == null && shiftB != null) return 1;  // A na kraj
-      if (shiftB == null && shiftA != null) return -1; // B na kraj
-      if (shiftA != null && shiftB != null && shiftA !== shiftB) return shiftA - shiftB;
+        if (shiftA == null && shiftB != null) return 1; // A na kraj
+        if (shiftB == null && shiftA != null) return -1; // B na kraj
+        if (shiftA != null && shiftB != null && shiftA !== shiftB)
+          return shiftA - shiftB;
 
-      // 2️⃣ came true/false
-      const cameA = a.CheckCame?.[0]?.came ? 1 : 0;
-      const cameB = b.CheckCame?.[0]?.came ? 1 : 0;
-      if (cameA !== cameB) return cameB - cameA; // true pre false
+        // 2️⃣ came true/false
+        const cameA = a.CheckCame?.[0]?.came ? 1 : 0;
+        const cameB = b.CheckCame?.[0]?.came ? 1 : 0;
+        if (cameA !== cameB) return cameB - cameA; // true pre false
 
-      // 3️⃣ employee id
-      return a.id - b.id;
-    });
+        // 3️⃣ employee id
+        return a.id - b.id;
+      });
 
-    setEmployees(sorted);
-  }
-};
+      setEmployees(sorted);
+    }
+  };
 
   // 🔹 Update status
   const handleUpdate = async (checkId, came) => {
@@ -71,10 +74,10 @@ const fetchData = async () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <h2 className="text-xl font-bold mb-4">
-        Date: <span className="text-2xl font-normal">{formattedDate}</span>
-      </h2>
-
+      <div>
+        <h2 className="text-xl font-bold">Daily Check Came</h2>
+        <h2 className="text-2xl font-normal">{formattedDate}</h2>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {employees.map((emp) => {
           const check = emp.CheckCame?.[0]; // jer filtriramo po danu
