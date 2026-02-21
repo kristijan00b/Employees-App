@@ -10,7 +10,6 @@ const EmployeesList = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [selected, setSelected] = useState("start_work_date-asc");
   const [searchEmployee, setSearchEmployee] = useState("");
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
 
   useEffect(() => {
     if (searchEmployee == "") {
@@ -19,6 +18,13 @@ const EmployeesList = () => {
       fetchEmployees(searchEmployee);
     }
   }, [searchEmployee, sortBy, sortOrder]);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", 
+    });
+  }, [currentPage]);
 
   const fetchEmployees = async (searchEmployee) => {
     const { data, error } = await supabase
