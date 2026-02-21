@@ -117,7 +117,7 @@ const EmployeeProfileEdit = () => {
     <div className="overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold mb-1">
-          <span className="text-xl font-normal">Edit</span> {employeeData.first_name} {employeeData.last_name}
+          <span className="text-xl font-normal">Izmeni</span> {employeeData.first_name} {employeeData.last_name}
         </h2>
         <div>
           <div className="flex justify-end gap-3">
@@ -125,14 +125,14 @@ const EmployeeProfileEdit = () => {
               onClick={() => navigate(-1)}
               className="hover:cursor-pointer px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
             >
-              Cancel
+              Otkaži
             </button>
 
             <button
               onClick={handleUpdate}
               className="hover:cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
             >
-              Save
+              Sačuvaj
             </button>
           </div>
         </div>
@@ -140,7 +140,7 @@ const EmployeeProfileEdit = () => {
       <div className="mb-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col">
-            <p className="text-gray-500 text-xs mb-1">First Name</p>
+            <p className="text-gray-500 text-xs mb-1">Ime</p>
             <input
               name="first_name"
               value={employeeData.first_name}
@@ -150,7 +150,7 @@ const EmployeeProfileEdit = () => {
           </div>
 
           <div className="flex flex-col">
-            <p className="text-gray-500 text-xs mb-1">Last Name</p>
+            <p className="text-gray-500 text-xs mb-1">Prezime</p>
             <input
               name="last_name"
               value={employeeData.last_name}
@@ -170,7 +170,7 @@ const EmployeeProfileEdit = () => {
           </div>
 
           <div className="flex flex-col">
-            <p className="text-gray-500 text-xs mb-1">Phone</p>
+            <p className="text-gray-500 text-xs mb-1">Telefon</p>
             <input
               name="phone"
               value={employeeData.phone}
@@ -180,7 +180,7 @@ const EmployeeProfileEdit = () => {
           </div>
 
           <div className="flex flex-col">
-            <p className="text-gray-500 text-xs mb-1">Country</p>
+            <p className="text-gray-500 text-xs mb-1">Zemlja</p>
             <input
               name="country"
               value={employeeData.country}
@@ -190,7 +190,7 @@ const EmployeeProfileEdit = () => {
           </div>
 
           <div className="flex flex-col">
-            <p className="text-gray-500 text-xs mb-1">City</p>
+            <p className="text-gray-500 text-xs mb-1">Grad</p>
             <input
               name="city"
               value={employeeData.city}
@@ -200,7 +200,7 @@ const EmployeeProfileEdit = () => {
           </div>
 
           <div className="flex flex-col">
-            <p className="text-gray-500 text-xs mb-1">Address</p>
+            <p className="text-gray-500 text-xs mb-1">Adresa</p>
             <input
               name="address"
               value={employeeData.address}
@@ -210,7 +210,7 @@ const EmployeeProfileEdit = () => {
           </div>
 
           <div className="flex flex-col">
-            <p className="text-gray-500 text-xs mb-1">Born Date</p>
+            <p className="text-gray-500 text-xs mb-1">Datum rođenja</p>
             <input
               type="date"
               name="born_date"
@@ -220,12 +220,12 @@ const EmployeeProfileEdit = () => {
             />
           </div>
           <div className="flex flex-col">
-            <p className="text-gray-500 text-xs mb-1">Salary Type</p>
+            <p className="text-gray-500 text-xs mb-1">Tip plate</p>
             <select
               name="salaryTypeId"
               value={salaryTypeId}
               onChange={(e) => setSalaryTypeId(e.target.value)}
-              className="bg-white p-2 rounded-md w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="hover:cursor-pointer bg-white p-2 rounded-md w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             >
               <option value="">-- Select --</option>
               {salaryTypes.map((type) => (
@@ -237,7 +237,7 @@ const EmployeeProfileEdit = () => {
           </div>
 
           <div className="flex flex-col">
-            <p className="text-gray-500 text-xs mb-1">Salary Amount</p>
+            <p className="text-gray-500 text-xs mb-1">Plata</p>
             <input
               type="number"
               name="salaryAmount"

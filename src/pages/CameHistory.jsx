@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
+import { formatDate } from "../utils/date";
 
 const CameHistory = () => {
   // Dan koji trenutno gledamo
@@ -44,12 +45,7 @@ const CameHistory = () => {
   };
 
   // Lep format za header
-  const formattedDate = new Date(currentDay).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const formattedDate = formatDate(new Date(currentDay).toLocaleDateString());
 
   useEffect(() => {
     fetchEmployees();
@@ -65,7 +61,7 @@ const CameHistory = () => {
       <div className="flex justify-between items-center mb-6">
         {/* Datum levo */}
         <div>
-          <h2 className="text-xl font-bold">Daily Check Came History</h2>
+          <h2 className="text-xl font-bold">Dnevna istorija dolazaka</h2>
           <h2 className="text-2xl font-normal">{formattedDate}</h2>
         </div>
 
@@ -102,7 +98,7 @@ const CameHistory = () => {
           .map((emp, index) => {
             // <--- index je redni broj
             const check = checks.find((c) => c.employee_id === emp.id);
-            const cameText = check ? (check.came ? "Yes" : "No") : "No";
+            const cameText = check ? (check.came ? "Da" : "Ne") : "Ne";
 
             return (
               <div
@@ -121,7 +117,7 @@ const CameHistory = () => {
                 </div>
                 <div
                   className={`font-semibold ${
-                    cameText === "Yes" ? "text-green-600" : "text-red-600"
+                    cameText === "Da" ? "text-green-600" : "text-red-600"
                   }`}
                 >
                   {cameText}

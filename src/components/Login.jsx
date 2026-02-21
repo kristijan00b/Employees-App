@@ -22,10 +22,10 @@ const Login = () => {
       if (result.success) {
         navigate("/dashboard/employees-list");
       } else {
-        setError(result.message || "Invalid email or password.");
+        setError(result.message || "Pogrešan email ili šifra.");
       }
     } catch (error) {
-      setError("Invalid email or password.");
+      setError("Pogrešan email ili šifra.");
     } finally {
       setLoading(false);
     }
@@ -42,13 +42,13 @@ const Login = () => {
           />
         </div>
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Employees Portal Log In
+          Prijava na Zaposleni Portal
         </h2>
 
         <form onSubmit={handleLogIn} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
-              Email
+              E-mail
             </label>
             <input
               type="email"
@@ -61,7 +61,7 @@ const Login = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
-              Password
+              Šifra
             </label>
             <input
               type="password"

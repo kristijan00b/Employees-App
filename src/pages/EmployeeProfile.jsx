@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import { formatDate } from "../utils/date";
 
 const EmployeeProfile = () => {
   const { employeeId } = useParams();
   const [employeeData, setEmployeeData] = useState("");
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false); // za PTO submit
-  const [ptos, setPtos] = useState([]);
-  const [spentPto, setSpentPto] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
   const [salaryData, setSalaryData] = useState(null);
+  const [spentPto, setSpentPto] = useState(0);
+  const [scheduledPtos, setScheduledPtos] = useState([]);
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -34,30 +35,6 @@ const EmployeeProfile = () => {
     setLoading(false);
   };
 
-  const fetchPtos = async () => {
-    const { data, error } = await supabase
-      .from("PtoRequest")
-      .select("*")
-      .eq("employee_id", employeeId);
-
-    if (error) {
-      console.log("Error fetching ptos", error);
-    } else {
-      setPtos(data);
-
-      const spentPto = data.reduce((total, pto) => {
-        const start = new Date(pto.start_date);
-        const end = new Date(pto.end_date);
-
-        const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-
-        return total + diffDays;
-      }, 0);
-
-      setSpentPto(spentPto);
-    }
-  };
-
   const fetchSalary = async () => {
     const { data, error } = await supabase
       .from("Salary")
@@ -78,110 +55,83 @@ const EmployeeProfile = () => {
     setSuccessMessage("");
     setErrorMessage("");
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    // Validacija da endDate nije pre startDate
-    if (end < start) {
-      setErrorMessage("End date cannot be before start date");
-      setSubmitting(false);
-      return;
-    }
-
-    // Broj traženih dana
-    const requestedDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-
-    // Dostupni dani
-    const availableDays = employeeData.pto - spentPto;
-
-    if (requestedDays > availableDays) {
-      setErrorMessage(
-        `Not enough available PTO days. You have ${availableDays} days left.`,
-      );
-      setSubmitting(false);
-      return;
-    }
-
-    // **Provera preklapanja sa postojećim PTO-ima**
-    const overlap = ptos.some((pto) => {
-      const ptoStart = new Date(pto.start_date);
-      const ptoEnd = new Date(pto.end_date);
-
-      // Ako postoji bilo kakvo preklapanje intervala
-      return start <= ptoEnd && end >= ptoStart;
-    });
-
-    if (overlap) {
-      setErrorMessage("This PTO request overlaps with an existing PTO.");
-      setSubmitting(false);
-      return;
-    }
-
-    // Ako je sve ok, šaljemo u bazu
     try {
-      const { data, error } = await supabase.from("PtoRequest").insert([
-        {
-          employee_id: employeeId,
-          start_date: startDate,
-          end_date: endDate,
-        },
-      ]);
+      // kreiraj sve datume između start i end
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const dates = [];
 
-      if (error) {
-        console.error("Error inserting PTO request:", error);
-        setErrorMessage("Failed to submit PTO request");
-      } else {
-        setSuccessMessage("PTO request submitted successfully!");
-        setStartDate("");
-        setEndDate("");
-        fetchPtos(); // osvežava listu PTO-a i spentPto
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        dates.push(new Date(d)); // dodaj kopiju datuma
       }
-    } catch (err) {
-      console.error(err);
-      setErrorMessage("Something went wrong");
-    }
 
-    setSubmitting(false);
+      // ubaci svaki datum u CheckCame sa shift 4
+      for (const date of dates) {
+        const dayStr = date.toISOString().split("T")[0]; // yyyy-mm-dd
+        const { error } = await supabase.from("CheckCame").insert([
+          {
+            employee_id: employeeId,
+            day: dayStr,
+            shift: 4, // oznacava PTO
+          },
+        ]);
+        if (error) throw error;
+      }
+
+      setSuccessMessage("Odmor uspešno dodat!");
+      setStartDate("");
+      setEndDate("");
+
+      // refresuj PTO datume
+      fetchPtos();
+    } catch (err) {
+      console.log(err);
+      setErrorMessage("Greška pri upisu odmora.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  // Funkcija za otkazivanje PTO-a
-  const handleCancelPto = async (ptoId, start, end, days) => {
-    if (
-      !window.confirm(
-        `Are you sure you want to cancel PTO from ${start.toLocaleDateString()} to ${end.toLocaleDateString()}?`,
-      )
-    )
-      return;
+  const fetchPtos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("CheckCame")
+        .select("day")
+        .eq("employee_id", employeeId)
+        .eq("shift", 4)
+        .order("day", { ascending: true });
 
+      if (error) throw error;
+
+      setScheduledPtos(data || []);
+      setSpentPto(data?.length || 0);
+    } catch (err) {
+      console.log("Error fetching PTOs:", err);
+    }
+  };
+
+  const handleCancelPto = async (day) => {
     try {
       const { error } = await supabase
-        .from("PtoRequest")
+        .from("CheckCame")
         .delete()
-        .eq("id", ptoId);
+        .eq("employee_id", employeeId)
+        .eq("day", day)
+        .eq("shift", 4);
 
-      if (error) {
-        console.error("Error deleting PTO:", error);
-        alert("Failed to cancel PTO.");
-      } else {
-        // Ažurira lokalni state odmah
-        setPtos((prev) => prev.filter((p) => p.id !== ptoId));
-        setSpentPto((prev) => prev - days);
-      }
+      if (error) throw error;
+
+      // refresuj PTO listu
+      fetchPtos();
     } catch (err) {
-      console.error(err);
-      alert("Something went wrong.");
+      console.log("Error cancelling PTO:", err);
     }
   };
-
   useEffect(() => {
-    fetchPtos();
     fetchEmployee();
     fetchSalary();
+    fetchPtos();
   }, [employeeId]);
-
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
-  if (!employeeData)
-    return <p className="text-center mt-10">Employee not found</p>;
 
   return (
     <div className="overflow-x-auto">
@@ -197,32 +147,32 @@ const EmployeeProfile = () => {
             navigate(`/dashboard/employee-profile/${employeeId}/edit`)
           }
         >
-          Edit Employee
+          Izmeni
         </button>
       </div>
 
       {/* Personal Info */}
       <div className="mb-5">
         <h3 className="text-md font-semibold mb-3 pl-3 bg-blue-500 text-white rounded-md">
-          Personal Info
+          Osnovni podaci
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <p className="text-gray-500 text-xs">First Name</p>
+            <p className="text-gray-500 text-xs">Ime</p>
             <p className="text-gray-900 font-medium">
               {employeeData.first_name}
             </p>
           </div>
           <div>
-            <p className="text-gray-500 text-xs">Last Name</p>
+            <p className="text-gray-500 text-xs">Prezime</p>
             <p className="text-gray-900 font-medium">
               {employeeData.last_name}
             </p>
           </div>
           <div>
-            <p className="text-gray-500 text-xs">Born Date</p>
+            <p className="text-gray-500 text-xs">Datum Rođenja</p>
             <p className="text-gray-900 font-medium">
-              {employeeData.born_date}
+              {formatDate(employeeData.born_date)}
             </p>
           </div>
         </div>
@@ -231,35 +181,35 @@ const EmployeeProfile = () => {
       {/* Work Info */}
       <div className="mb-5">
         <h3 className="text-md font-semibold mb-3 pl-3 bg-blue-500 text-white rounded-md">
-          Work Info
+          Zaposlenje
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <p className="text-gray-500 text-xs">Start Work Date</p>
+            <p className="text-gray-500 text-xs">Datum zaposlenja</p>
             <p className="text-gray-900 font-medium">
-              {employeeData.start_work_date}
+              {formatDate(employeeData.start_work_date)}
             </p>
           </div>
           <div>
-            <p className="text-gray-500 text-xs">Work Status</p>
+            <p className="text-gray-500 text-xs">Status</p>
             <p className="text-gray-900 font-medium">
               {employeeData.WorkStatus?.name}
             </p>
           </div>
           <div>
-            <p className="text-gray-500 text-xs">Position</p>
+            <p className="text-gray-500 text-xs">Pozicija</p>
             <p className="text-gray-900 font-medium">
               {employeeData.Position?.name}
             </p>
           </div>
           <div>
-            <p className="text-gray-500 text-xs">Salary Type</p>
+            <p className="text-gray-500 text-xs">Tip plate</p>
             <p className="text-gray-900 font-medium">
               {salaryData?.SalaryType?.name || "-"}
             </p>
           </div>
           <div>
-            <p className="text-gray-500 text-xs">Salary Amount</p>
+            <p className="text-gray-500 text-xs">Plata</p>
             <p className="text-gray-900 font-medium">
               {salaryData?.amount != null
                 ? `${salaryData.amount.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} RSD`
@@ -272,29 +222,29 @@ const EmployeeProfile = () => {
       {/* Contact Info */}
       <div className="mb-5">
         <h3 className="text-md font-semibold mb-3 pl-3 bg-blue-500 text-white rounded-md">
-          Contact Info
+          Kontakt
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
           <div>
-            <p className="text-gray-500 text-xs">Email</p>
+            <p className="text-gray-500 text-xs">E-mail</p>
             <p className="text-gray-900 font-medium">{employeeData.email}</p>
           </div>
           <div>
-            <p className="text-gray-500 text-xs">Phone</p>
+            <p className="text-gray-500 text-xs">Telefon</p>
             <p className="text-gray-900 font-medium">{employeeData.phone}</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <p className="text-gray-500 text-xs">Country</p>
+            <p className="text-gray-500 text-xs">Zemlja</p>
             <p className="text-gray-900 font-medium">{employeeData.country}</p>
           </div>
           <div>
-            <p className="text-gray-500 text-xs">City</p>
+            <p className="text-gray-500 text-xs">Grad</p>
             <p className="text-gray-900 font-medium">{employeeData.city}</p>
           </div>
           <div>
-            <p className="text-gray-500 text-xs">Address</p>
+            <p className="text-gray-500 text-xs">Adresa</p>
             <p className="text-gray-900 font-medium">{employeeData.address}</p>
           </div>
         </div>
@@ -302,15 +252,15 @@ const EmployeeProfile = () => {
       {/* PTO Info */}
       <div className="mb-5">
         <h3 className="text-md font-semibold mb-3 pl-3 bg-blue-500 text-white rounded-md">
-          PTO
+          Odmor
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
           <div>
-            <p className="text-gray-500 text-xs">Annually days off</p>
+            <p className="text-gray-500 text-xs">Godišnje dana odmora</p>
             <p className="text-gray-900 font-medium">{employeeData.pto}</p>
           </div>
           <div>
-            <p className="text-gray-500 text-xs">Available days off</p>
+            <p className="text-gray-500 text-xs">Dostupno</p>
             <p className="text-gray-900 font-medium">
               {employeeData.pto - spentPto}
             </p>
@@ -323,7 +273,7 @@ const EmployeeProfile = () => {
           >
             <div>
               <label className="block text-gray-700 mb-1 text-xs">
-                Start Date
+                Prvi dan
               </label>
               <input
                 type="date"
@@ -336,7 +286,7 @@ const EmployeeProfile = () => {
 
             <div>
               <label className="block text-gray-700 mb-1 text-xs">
-                End Date
+                Poslednji dan
               </label>
               <input
                 type="date"
@@ -353,7 +303,7 @@ const EmployeeProfile = () => {
                 disabled={loading}
                 className="hover:cursor-pointer px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition disabled:opacity-50"
               >
-                {submitting ? "Submitting..." : "Request Time Off"}
+                {submitting ? "Slanje..." : "Zakaži odmor"}
               </button>
             </div>
 
@@ -370,48 +320,30 @@ const EmployeeProfile = () => {
       {/* PTO Requests List */}
       <div className="mt-6">
         <h3 className="text-md font-semibold mb-3 pl-3 bg-blue-500 text-white rounded-md">
-          Scheduled PTOs
+          Zakazani odmori
         </h3>
-
-        {ptos.length === 0 ? (
-          <p className="text-gray-500 pl-3">No PTO requests yet.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {ptos.map((pto) => {
-              const start = new Date(pto.start_date);
-              const end = new Date(pto.end_date);
-              const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-
-              return (
-                <div
-                  key={pto.id}
-                  className="relative bg-white shadow rounded-lg p-4 transition"
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {scheduledPtos.length > 0 ? (
+            scheduledPtos.map((pto) => (
+              <div
+                key={pto.day}
+                className="bg-white p-3 rounded-md shadow-sm flex justify-between items-center"
+              >
+                <p className="text-gray-900 font-medium mb-2">
+                  {formatDate(pto.day)}
+                </p>
+                <button
+                  className="hover:cursor-pointer px-3 py-1 text-xs text-red-600 border border-red-600 rounded hover:bg-red-600 hover:text-white transition"
+                  onClick={() => handleCancelPto(pto.day)}
                 >
-                  {/* Dugme X */}
-                  <button
-                    onClick={() => handleCancelPto(pto.id, start, end, days)}
-                    className="hover: cursor-pointer absolute top-2 right-4 text-gray-400 hover:text-red-500 font-bold"
-                  >
-                    ×
-                  </button>
-
-                  <p className="text-gray-500 text-xs">Start Date</p>
-                  <p className="text-gray-900 font-medium mb-2">
-                    {start.toLocaleDateString()}
-                  </p>
-
-                  <p className="text-gray-500 text-xs">End Date</p>
-                  <p className="text-gray-900 font-medium mb-2">
-                    {end.toLocaleDateString()}
-                  </p>
-
-                  <p className="text-gray-500 text-xs">Days</p>
-                  <p className="text-gray-900 font-medium">{days}</p>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                  Otkaži
+                </button>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 col-span-full">Nema zakazanih odmora</p>
+          )}
+        </div>
       </div>
     </div>
   );

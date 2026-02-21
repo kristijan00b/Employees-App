@@ -68,42 +68,42 @@ const Navbar = () => {
             className={linkClass("/dashboard/employees-list")}
             onClick={handleLinkClick}
           >
-            Employees List
+            Zaposleni
           </Link>
           <Link
             to="/dashboard/employee-add"
             className={linkClass("/dashboard/employee-add")}
             onClick={handleLinkClick}
           >
-            Add Employee
+            Zaposli
           </Link>
           <Link
             to="/dashboard/check-came"
             className={linkClass("/dashboard/check-came")}
             onClick={handleLinkClick}
           >
-            Check Came
+            Potvrdi dolaske
           </Link>
           <Link
             to="/dashboard/came-history"
             className={linkClass("/dashboard/came-history")}
             onClick={handleLinkClick}
           >
-            Came History
+            Istorija dolazaka
           </Link>
           <Link
             to="/dashboard/shifts"
             className={linkClass("/dashboard/shifts")}
             onClick={handleLinkClick}
           >
-            Shifts
+            Smene
           </Link>
 
           <button
             onClick={logOutUser}
             className="hover:cursor-pointer w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white transition mt-2"
           >
-            Logout
+            Odjavi se
           </button>
         </div>
       )}

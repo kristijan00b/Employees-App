@@ -132,20 +132,20 @@ const EmployeeAdd = () => {
   return (
     <div className="overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Add New Employee</h2>
+        <h2 className="text-2xl font-bold">Zaposli</h2>
         <Link
           to="/dashboard/employees-list"
           className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
         >
-          Employees List
+          Svi Zaposleni
         </Link>
       </div>
 
       <div>
         {successMessageEmployee && (
           <div className="mb-4 rounded-2xl bg-green-100 border border-green-400 text-green-800 px-6 py-4 shadow-md transition-all">
-            Employee {successMessageEmployee.firstName}{" "}
-            {successMessageEmployee.lastName} successfully added!
+            Osoba {successMessageEmployee.firstName}{" "}
+            {successMessageEmployee.lastName}, uspešno zapošljena!
           </div>
         )}
       </div>
@@ -153,7 +153,7 @@ const EmployeeAdd = () => {
         <form onSubmit={addNewEmployee}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 mb-1 ">First Name</label>
+              <label className="block text-gray-700 mb-1 ">Ime</label>
               <input
                 type="text"
                 value={firstName}
@@ -165,7 +165,7 @@ const EmployeeAdd = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Last Name</label>
+              <label className="block text-gray-700 mb-1">Prezime</label>
               <input
                 type="text"
                 value={lastName}
@@ -177,7 +177,7 @@ const EmployeeAdd = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Phone</label>
+              <label className="block text-gray-700 mb-1">Telefon</label>
               <input
                 type="text"
                 value={phone}
@@ -199,7 +199,7 @@ const EmployeeAdd = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Born Date</label>
+              <label className="block text-gray-700 mb-1">Datum rođenja</label>
               <input
                 type="date"
                 value={bornDate}
@@ -210,7 +210,7 @@ const EmployeeAdd = () => {
 
             <div>
               <label className="block text-gray-700 mb-1">
-                Start Work Date
+                Datum zapošljenja
               </label>
               <input
                 type="date"
@@ -221,7 +221,7 @@ const EmployeeAdd = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Country</label>
+              <label className="block text-gray-700 mb-1">Zemlja</label>
               <input
                 type="text"
                 value={country}
@@ -232,7 +232,7 @@ const EmployeeAdd = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">City</label>
+              <label className="block text-gray-700 mb-1">Grad</label>
               <input
                 type="text"
                 value={city}
@@ -243,7 +243,7 @@ const EmployeeAdd = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Address</label>
+              <label className="block text-gray-700 mb-1">Adresa</label>
               <input
                 type="text"
                 value={address}
@@ -254,7 +254,7 @@ const EmployeeAdd = () => {
             </div>
             <div>
               <label className="block text-gray-700 mb-1">
-                Annually Days Off
+                Godišnje dana odmora
               </label>
               <input
                 type="number"
@@ -268,7 +268,7 @@ const EmployeeAdd = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Work Status</label>
+              <label className="block text-gray-700 mb-1">Status zaposlenja</label>
               <select
                 value={selectedWorkStatus}
                 onChange={(e) => setSelectedWorkStatus(e.target.value)}
@@ -285,7 +285,7 @@ const EmployeeAdd = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Position</label>
+              <label className="block text-gray-700 mb-1">Pozicija</label>
               <select
                 value={selectedPosition}
                 onChange={(e) => setSelectedPosition(e.target.value)}
@@ -302,7 +302,7 @@ const EmployeeAdd = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Salary Type</label>
+              <label className="block text-gray-700 mb-1">Tip plate</label>
               <select
                 value={selectedSalaryType}
                 onChange={(e) => setSelectedSalaryType(e.target.value)}
@@ -319,7 +319,7 @@ const EmployeeAdd = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Salary Amount</label>
+              <label className="block text-gray-700 mb-1">Plata</label>
               <input
                 type="number"
                 value={salaryAmount}
@@ -338,7 +338,7 @@ const EmployeeAdd = () => {
               type="submit"
               className="hover:cursor-pointer px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
             >
-              Add Employee
+              Sačuvaj
             </button>
           </div>
         </form>

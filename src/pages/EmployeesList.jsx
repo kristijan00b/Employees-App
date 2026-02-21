@@ -22,7 +22,7 @@ const EmployeesList = () => {
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth", 
+      behavior: "smooth",
     });
   }, [currentPage]);
 
@@ -100,12 +100,12 @@ const EmployeesList = () => {
   return (
     <div className="overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Employees</h2>
+        <h2 className="text-2xl font-bold">Zaposleni</h2>
         <Link
           to="/dashboard/employee-add"
           className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
         >
-          Add Employee
+          Zaposli
         </Link>
       </div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
@@ -113,7 +113,7 @@ const EmployeesList = () => {
         <div className="flex items-center gap-2 rounded-2xl shadow-lg bg-white px-4 py-3 w-full md:w-md focus-within:ring-2 focus-within:ring-black/10 transition">
           <input
             type="text"
-            placeholder="🔍︎ Search employees"
+            placeholder="🔍︎ Pretraži zaposlene"
             onChange={(e) => setSearchEmployee(e.target.value)}
             className="w-full outline-none text-sm placeholder:text-gray-400"
           />
@@ -127,24 +127,24 @@ const EmployeesList = () => {
             className="hover:cursor-pointer flex items-center gap-2 rounded-2xl shadow-lg bg-white px-4 py-3 w-full md:w-3xs focus-within:ring-2 focus-within:ring-black/10 transition"
           >
             {/* START WORK DATE */}
-            <option value="start_work_date-asc">Start work date ⬇</option>
-            <option value="start_work_date-desc">Start work date ⬆</option>
+            <option value="start_work_date-asc">Datum zaposlenja ⬇</option>
+            <option value="start_work_date-desc">Datum zaposlenja ⬆</option>
 
             {/* ID */}
             <option value="id-asc">ID ⬇</option>
             <option value="id-desc">ID ⬆</option>
 
             {/* FIRST NAME */}
-            <option value="first_name-asc">First name A–Z</option>
-            <option value="first_name-desc">First name Z–A</option>
+            <option value="first_name-asc">Ime A–Z</option>
+            <option value="first_name-desc">Ime Z–A</option>
 
             {/* LAST NAME */}
-            <option value="last_name-asc">Last name A–Z</option>
-            <option value="last_name-desc">Last name Z–A</option>
+            <option value="last_name-asc">Prezime A–Z</option>
+            <option value="last_name-desc">Prezime Z–A</option>
 
             {/* POSITION */}
-            <option value="position-asc">Position A–Z</option>
-            <option value="position-desc">Position Z–A</option>
+            <option value="position-asc">Pozicije A–Z</option>
+            <option value="position-desc">Pozicija Z–A</option>
           </select>
         </div>
       </div>
@@ -157,7 +157,7 @@ const EmployeesList = () => {
           >
             <div className="mb-2 border-b border-gray-200">
               <p className="text-xs text-gray-500">
-                {index + currentPage * rowsPerPage - rowsPerPage + 1} employee
+                {index + currentPage * rowsPerPage - rowsPerPage + 1}.
               </p>
             </div>
 
@@ -167,24 +167,24 @@ const EmployeesList = () => {
             </div>
 
             <div className="mb-3">
-              <p className="text-xs text-gray-500">Full Name</p>
+              <p className="text-xs text-gray-500">Ime i prezime</p>
               <p className="font-semibold text-lg">
                 {employee.first_name} {employee.last_name}
               </p>
             </div>
 
             <div className="mb-2">
-              <p className="text-xs text-gray-500">Position</p>
+              <p className="text-xs text-gray-500">Pozicija</p>
               <p className="font-medium">{employee.Position?.name}</p>
             </div>
 
             <div className="mb-2">
-              <p className="text-xs text-gray-500">Email</p>
+              <p className="text-xs text-gray-500">E-mail</p>
               <p className="text-sm break-all">{employee.email}</p>
             </div>
 
             <div className="mb-4">
-              <p className="text-xs text-gray-500">Phone</p>
+              <p className="text-xs text-gray-500">Telefon</p>
               <p className="text-sm">{employee.phone}</p>
             </div>
 
@@ -192,7 +192,7 @@ const EmployeesList = () => {
               to={`/dashboard/employee-profile/${employee.id}`}
               className="block text-center bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition text-sm"
             >
-              View Profile
+              Pogledaj Profil
             </Link>
           </div>
         ))}
@@ -209,11 +209,11 @@ const EmployeesList = () => {
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
-          {"<<"} Prev
+          {"<<"} Prethodna
         </button>
 
         <span className="px-3 py-1">
-          Page {currentPage} of {totalPages}
+          Straba {currentPage} od {totalPages}
         </span>
 
         <button
@@ -229,7 +229,7 @@ const EmployeesList = () => {
           }
           disabled={currentPage === totalPages}
         >
-          Next {">>"}
+          Sledeća {">>"}
         </button>
       </div>
     </div>

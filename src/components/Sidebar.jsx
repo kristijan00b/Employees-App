@@ -33,35 +33,35 @@ const Sidebar = ({ onLinkClick }) => {
           className={linkClass("/dashboard/employees-list")}
           onClick={handleLinkClick}
         >
-          Employees List
+          Zaposleni
         </Link>
         <Link
           to="/dashboard/employee-add"
           className={linkClass("/dashboard/employee-add")}
           onClick={handleLinkClick}
         >
-          Add Employee
+          Zaposli
         </Link>
         <Link
           to="/dashboard/check-came"
           className={linkClass("/dashboard/check-came")}
           onClick={handleLinkClick}
         >
-          Check Came
+          Potvrdi dolaske
         </Link>
         <Link
           to="/dashboard/came-history"
           className={linkClass("/dashboard/came-history")}
           onClick={handleLinkClick}
         >
-          Came History
+          Istorija dolazaka
         </Link>
         <Link
           to="/dashboard/shifts"
           className={linkClass("/dashboard/shifts")}
           onClick={handleLinkClick}
         >
-          Shifts
+          Smene
         </Link>
       </nav>
 
@@ -70,12 +70,12 @@ const Sidebar = ({ onLinkClick }) => {
           onClick={logOutUser}
           className="hover:cursor-pointer w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition"
         >
-          Logout
+          Odjavi se
         </button>
       </div>
 
       <div className="p-4 border-t border-gray-800 text-sm text-gray-400">
-        © {new Date().getFullYear()} Employees Portal App
+        © {new Date().getFullYear()} Zaposleni Portal App
       </div>
     </aside>
   );

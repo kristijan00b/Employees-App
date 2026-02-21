@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { supabase } from "../supabaseClient";
+import { formatDate } from "../utils/date";
 
 const Shifts = () => {
   // GET MONDAY
@@ -214,9 +215,9 @@ const Shifts = () => {
     setCurrentWeekStart(date.toISOString().split("T")[0]);
   };
 
-  const formattedRange = `${new Date(
-    weekDays[0],
-  ).toLocaleDateString()} - ${new Date(weekDays[6]).toLocaleDateString()}`;
+  const formattedRange = `${formatDate(
+    new Date(weekDays[0]).toLocaleDateString(),
+  )} - ${formatDate(new Date(weekDays[6]).toLocaleDateString())}`;
 
   // UI
   return (
@@ -224,10 +225,12 @@ const Shifts = () => {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-xl font-bold">Weekly Shift Assignment</h2>
+          <h2 className="text-xl font-bold">Raspored smena</h2>
           <h2 className="text-2xl font-normal">
             {formattedRange}{" "}
-            {isCurrentWeek && <span className="text-xl">Current Week</span>}
+            {isCurrentWeek && (
+              <span className="text-xl">Trenutna nedelja </span>
+            )}
           </h2>
         </div>
 
@@ -251,7 +254,7 @@ const Shifts = () => {
       {/* Weekly Stats */}
       <div className="mb-4 flex gap-4">
         <div className="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-semibold shadow">
-          Full Assigned:{" "}
+          Raspoređeni:{" "}
           {
             employees.filter((emp) =>
               weekDays.every((day) => assignmentMap[`${emp.id}_${day}`]?.shift),
@@ -260,7 +263,7 @@ const Shifts = () => {
         </div>
 
         <div className="bg-white text-gray-800 px-4 py-2 rounded-lg font-semibold shadow">
-          Pending:{" "}
+          Neraspoređeni:{" "}
           {
             employees.filter(
               (emp) =>
@@ -312,13 +315,13 @@ const Shifts = () => {
                   >
                     {/* Dan */}
                     <div className="text-xs mb-1">
-                      {new Date(day).toLocaleDateString("en-US", {
+                      {new Date(day).toLocaleDateString("sr-Latn-RS", {
                         weekday: "short",
                       })}
                     </div>
 
                     <div className="text-[10px] text-gray-600 mb-1">
-                      {new Date(day).toLocaleDateString()}
+                      {formatDate(new Date(day).toLocaleDateString())}
                     </div>
 
                     {/* Mini dropdown */}
@@ -368,7 +371,7 @@ const Shifts = () => {
                   handleAssignWholeWeek(emp.id, value);
                 }}
               >
-                <option value="">Assign whole week</option>
+                <option value="">Za celu nedelju</option>
                 {shiftOptions.map((shift) => (
                   <option key={shift.id} value={shift.id}>
                     {shift.name}
@@ -392,7 +395,7 @@ const Shifts = () => {
                   handleAssignWeekdays(emp.id, value);
                 }}
               >
-                <option value="">Assign Mon-Fri</option>
+                <option value="">Od Pon do Pet</option>
                 {shiftOptions.map((shift) => (
                   <option key={shift.id} value={shift.id}>
                     {shift.name}

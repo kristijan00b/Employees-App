@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import { formatDate } from "../utils/date";
 
 const CheckCame = () => {
   const [employees, setEmployees] = useState([]);
   const [today, setToday] = useState(new Date().toISOString().split("T")[0]);
 
-  const formattedDate = new Date(today).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const formattedDate = formatDate(new Date(today).toLocaleDateString());
 
   // 🔹 Jedan fetch – Employee + današnji CheckCame
   const fetchData = async () => {
@@ -74,8 +70,8 @@ const CheckCame = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div>
-        <h2 className="text-xl font-bold">Daily Check Came</h2>
+      <div className="mb-6">
+        <h2 className="text-xl font-bold">Potvrda dolaska</h2>
         <h2 className="text-2xl font-normal">{formattedDate}</h2>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -95,17 +91,17 @@ const CheckCame = () => {
                 </p>
 
                 <p className="text-sm text-gray-500">
-                  Status:{" "}
+                  Došap:{" "}
                   <span
                     className={`font-semibold ${
                       check?.came ? "text-green-600" : "text-red-600"
                     }`}
                   >
-                    {check?.came ? "YES" : "NO"}
+                    {check?.came ? "Da" : "Ne"}
                   </span>
                 </p>
                 <p className="text-sm text-gray-500">
-                  Shift: {emp.CheckCame?.[0]?.ShiftType?.name || "-"}
+                  Smena: {emp.CheckCame?.[0]?.ShiftType?.name || "-"}
                 </p>
               </div>
 
@@ -115,14 +111,14 @@ const CheckCame = () => {
                     className="hover:cursor-pointer bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg transition"
                     onClick={() => handleUpdate(check.id, true)}
                   >
-                    Yes
+                    Da
                   </button>
 
                   <button
                     className="hover:cursor-pointer bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition"
                     onClick={() => handleUpdate(check.id, false)}
                   >
-                    No
+                    Ne
                   </button>
                 </div>
               )}
