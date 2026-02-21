@@ -98,13 +98,6 @@ const Navbar = () => {
           >
             Shifts
           </Link>
-          <Link
-            to="/dashboard/shifts-weekly"
-            className={linkClass("/dashboard/shifts-weekly")}
-            onClick={handleLinkClick}
-          >
-            Shifts Weekly
-          </Link>
 
           <button
             onClick={logOutUser}

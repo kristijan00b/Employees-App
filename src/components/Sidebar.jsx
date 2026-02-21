@@ -63,13 +63,6 @@ const Sidebar = ({ onLinkClick }) => {
         >
           Shifts
         </Link>
-        <Link
-          to="/dashboard/shifts-weekly"
-          className={linkClass("/dashboard/shifts-weekly")}
-          onClick={handleLinkClick}
-        >
-          Shifts Weekly
-        </Link>
       </nav>
 
       <div className="p-3 border-t border-gray-800">
