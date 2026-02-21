@@ -10,6 +10,7 @@ import EmployeeProfileEdit from "./pages/EmployeeProfileEdit";
 import CheckCame from "./pages/CheckCame";
 import Shifts from "./pages/Shifts";
 import CmaeHistory from "./pages/CameHistory";
+import ShiftsWeekly from "./pages/ShiftsWeekly";
 
 export const router = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
       {
         path: "shifts",
         element: <Shifts />,
+      },
+      {
+        path: "shifts-weekly",
+        element: <ShiftsWeekly />,
       },
     ],
   },
