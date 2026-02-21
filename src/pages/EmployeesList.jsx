@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 const EmployeesList = () => {
   const [employeesList, setEmployeesList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
-  const [sortBy, setSortBy] = useState("first_name");
+  const rowsPerPage = 6;
+  const [sortBy, setSortBy] = useState("id");
   const [sortOrder, setSortOrder] = useState("asc");
   const [selected, setSelected] = useState("start_work_date-asc");
   const [searchEmployee, setSearchEmployee] = useState("");
@@ -41,25 +41,50 @@ const EmployeesList = () => {
   const fetchAllEmployees = async () => {
     const { data, error } = await supabase
       .from("Employee")
-      .select(`*,Position (name), WorkStatus (name)`)
-      .order(sortBy, { ascending: sortOrder === "asc" });
+      .select(`*,Position (name), WorkStatus (name)`);
 
     if (error) {
       console.log("Error fetching all employees", error);
-    } else {
-      console.log(data);
-      setEmployeesList(data);
+      return;
     }
+
+    let sortedData = [...data];
+
+    if (sortBy === "position") {
+      sortedData.sort((a, b) => {
+        const posA = a.Position?.name || "";
+        const posB = b.Position?.name || "";
+
+        if (sortOrder === "asc") {
+          return posA.localeCompare(posB);
+        } else {
+          return posB.localeCompare(posA);
+        }
+      });
+    } else {
+      sortedData.sort((a, b) => {
+        const valA = a[sortBy];
+        const valB = b[sortBy];
+
+        if (sortOrder === "asc") {
+          return valA > valB ? 1 : -1;
+        } else {
+          return valA < valB ? 1 : -1;
+        }
+      });
+    }
+
+    setEmployeesList(sortedData);
   };
 
   const handleChangeSort = (e) => {
     const value = e.target.value;
     setSelected(value);
+
     const [newSortBy, newSortOrder] = value.split("-");
     setSortBy(newSortBy);
     setSortOrder(newSortOrder);
   };
-
   // podesavanje stranica tabele
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -95,99 +120,73 @@ const EmployeesList = () => {
             onChange={handleChangeSort}
             className="hover:cursor-pointer flex items-center gap-2 rounded-2xl shadow-lg bg-white px-4 py-3 w-full md:w-3xs focus-within:ring-2 focus-within:ring-black/10 transition"
           >
+            {/* START WORK DATE */}
             <option value="start_work_date-asc">Start work date ⬇</option>
             <option value="start_work_date-desc">Start work date ⬆</option>
+
+            {/* ID */}
+            <option value="id-asc">ID ⬇</option>
+            <option value="id-desc">ID ⬆</option>
+
+            {/* FIRST NAME */}
+            <option value="first_name-asc">First name A–Z</option>
+            <option value="first_name-desc">First name Z–A</option>
+
+            {/* LAST NAME */}
+            <option value="last_name-asc">Last name A–Z</option>
+            <option value="last_name-desc">Last name Z–A</option>
+
+            {/* POSITION */}
+            <option value="position-asc">Position A–Z</option>
+            <option value="position-desc">Position Z–A</option>
           </select>
         </div>
       </div>
 
-      <div className="hidden md:block overflow-x-auto shadow">
-        <table className="min-w-full border border-gray-200">
-          <thead className="bg-blue-500 text-white">
-            <tr>
-              <th className="px-4 py-2 text-left">#</th>
-              <th className="px-4 py-2 text-left">ID</th>
-              <th className="px-4 py-2 text-left">Full name</th>
-              <th className="px-4 py-2 text-left">Position</th>
-              <th className="px-4 py-2 text-left">Status</th>
-              <th className="px-4 py-2 text-left">E-mail</th>
-              <th className="px-4 py-2 text-left">Phone</th>
-              <th className="px-4 py-2 text-left">View</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentRows.map((employee, index) => (
-              <tr
-                key={employee.id}
-                className={
-                  index % 2 === 0
-                    ? "hover:bg-yellow-50 bg-gray-50"
-                    : "hover:bg-yellow-50 bg-white"
-                }
-              >
-                <td className="px-4 py-2 border-b border-gray-200">
-                  {index + currentPage * 10 - 9}
-                </td>
-                <td className="px-4 py-2 border-b border-gray-200">
-                  {employee.id}
-                </td>
-                <td className="px-4 py-2 border-b border-gray-200">
-                  {employee.first_name} {employee.last_name}
-                </td>
-                <td className="px-4 py-2 border-b border-gray-200">
-                  {employee.Position?.name}
-                </td>
-                <td className="px-4 py-2 border-b border-gray-200">
-                  {employee.WorkStatus?.name}
-                </td>
-                <td className="px-4 py-2 border-b border-gray-200">
-                  {employee.email}
-                </td>
-                <td className="px-4 py-2 border-b border-gray-200">
-                  {employee.phone}
-                </td>
-                <td
-                  className="hover:cursor-pointer px-4 py-2 border-b border-gray-200 text-center"
-                  onClick={() => setSelectedEmployeeId(employee.id)}
-                >
-                  <Link to={`/dashboard/employee-profile/${employee.id}`}>
-                    📝
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="md:hidden space-y-3">
-        {currentRows.map((employee) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {currentRows.map((employee, index) => (
           <div
             key={employee.id}
-            className="bg-white shadow-md rounded-xl p-4 border border-gray-200"
+            className="bg-white shadow-md rounded-2xl p-5 border border-gray-200 hover:shadow-lg transition"
           >
-            <p className="text-sm mb-2">
-              <span className="text-gray-500 text-xs">ID </span>
-              <span className="font-semibold">{employee.id}</span>
-            </p>
+            <div className="mb-2 border-b border-gray-200">
+              <p className="text-xs text-gray-500">
+                {index + currentPage * rowsPerPage - rowsPerPage + 1} employee
+              </p>
+            </div>
 
-            <div className="mb-1">
+            <div className="mb-3">
+              <p className="text-xs text-gray-500">ID</p>
+              <p className="font-semibold text-lg">{employee.id}</p>
+            </div>
+
+            <div className="mb-3">
               <p className="text-xs text-gray-500">Full Name</p>
-              <p className="font-semibold">
+              <p className="font-semibold text-lg">
                 {employee.first_name} {employee.last_name}
               </p>
             </div>
 
-            <div>
+            <div className="mb-2">
               <p className="text-xs text-gray-500">Position</p>
               <p className="font-medium">{employee.Position?.name}</p>
             </div>
 
+            <div className="mb-2">
+              <p className="text-xs text-gray-500">Email</p>
+              <p className="text-sm break-all">{employee.email}</p>
+            </div>
+
+            <div className="mb-4">
+              <p className="text-xs text-gray-500">Phone</p>
+              <p className="text-sm">{employee.phone}</p>
+            </div>
+
             <Link
               to={`/dashboard/employee-profile/${employee.id}`}
-              className="mt-3 inline-block text-blue-500 text-xs font-medium"
+              className="block text-center bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition text-sm"
             >
-              View Profile →
+              View Profile
             </Link>
           </div>
         ))}

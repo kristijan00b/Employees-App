@@ -225,10 +225,10 @@ const Shifts = () => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-xl font-bold">Weekly Shift Assignment</h2>
-          <h2 className="text-2xl font-normal">{formattedRange} {isCurrentWeek && (
-              <span className="text-xl">Current Week</span>
-          )}</h2>
-          
+          <h2 className="text-2xl font-normal">
+            {formattedRange}{" "}
+            {isCurrentWeek && <span className="text-xl">Current Week</span>}
+          </h2>
         </div>
 
         <div className="flex gap-2">
@@ -292,9 +292,16 @@ const Shifts = () => {
                 let bgClass = "bg-gray-100 text-gray-500"; // default = nema smenu
                 if (assignment?.shift) {
                   if (assignment.shift === 4) {
-                    bgClass = "bg-yellow-200 text-yellow-800"; // shift 4 = žuta
+                    bgClass = "bg-yellow-200 text-yellow-800"; // out
+
+                    if (isDayDisabled(day)) {
+                      bgClass = "bg-yellow-100 ";
+                    }
                   } else {
-                    bgClass = "bg-green-200 text-green-800"; // ostale smene = zelena
+                    bgClass = "bg-green-300 text-green-900";
+                    if (isDayDisabled(day)) {
+                      bgClass = "bg-green-200 ";
+                    }
                   }
                 }
 
