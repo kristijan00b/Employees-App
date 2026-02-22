@@ -17,7 +17,7 @@ const EmployeeAdd = () => {
   const [selectedPosition, setSelectedPosition] = useState("");
   const [selectedSalaryType, setSelectedSalaryType] = useState("");
   const [salaryAmount, setSalaryAmount] = useState("");
-  const [salaryTypes, setSalaryTypes] = useState([]); // iz baze salaryType
+  const [salaryTypes, setSalaryTypes] = useState([]);
 
   const [workStatuses, setWorkStatuses] = useState([]);
   const [positions, setPositions] = useState([]);
@@ -25,63 +25,66 @@ const EmployeeAdd = () => {
   const [successMessageEmployee, setSuccessMessageEmployee] = useState(null);
 
   const addNewEmployee = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const newEmployeeData = {
-    first_name: firstName,
-    last_name: lastName,
-    email: email,
-    phone: phone,
-    country: country,
-    city: city,
-    address: address,
-    born_date: bornDate,
-    start_work_date: startWorkData,
-    pto: pto,
-    work_status_id: selectedWorkStatus,
-    position_id: selectedPosition,
-  };
+    const newEmployeeData = {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      phone: phone,
+      country: country,
+      city: city,
+      address: address,
+      born_date: bornDate,
+      start_work_date: startWorkData,
+      pto: pto,
+      work_status_id: selectedWorkStatus,
+      position_id: selectedPosition,
+    };
 
-  try {
-    // 1️⃣ Dodaj zaposlenog
-    const { data: employeeData, error: empError } = await supabase
-      .from("Employee")
-      .insert([newEmployeeData])
-      .select()
-      .single();
+    try {
+      // 1️⃣ Dodaj zaposlenog
+      const { data: employeeData, error: empError } = await supabase
+        .from("Employee")
+        .insert([newEmployeeData])
+        .select()
+        .single();
 
-    if (empError) {
-      console.log("Insert employee error:", empError);
-      return;
+      if (empError) {
+        console.log("Insert employee error:", empError);
+        return;
+      }
+
+      // 2️⃣ Pozovi funkciju za salary sa ID-em novog zaposlenog
+      await addSalary(
+        employeeData.id,
+        selectedSalaryType,
+        salaryAmount,
+        startWorkData,
+      );
+
+      // 3️⃣ Poruka i reset polja
+      setSuccessMessageEmployee({ firstName, lastName });
+      setTimeout(() => setSuccessMessageEmployee(null), 3000);
+
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhone("");
+      setCountry("");
+      setCity("");
+      setAddress("");
+      setBornDate("");
+      setStartWorkData("");
+      setSelectedWorkStatus("");
+      setSelectedPosition("");
+      setSelectedSalaryType("");
+      setSalaryAmount("");
+      setPto(0);
+    } catch (error) {
+      console.log("Unexpected error:", error);
     }
-
-    // 2️⃣ Pozovi funkciju za salary sa ID-em novog zaposlenog
-    await addSalary(employeeData.id, selectedSalaryType, salaryAmount, startWorkData);
-
-    // 3️⃣ Poruka i reset polja
-    setSuccessMessageEmployee({ firstName, lastName });
-    setTimeout(() => setSuccessMessageEmployee(null), 3000);
-
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setPhone("");
-    setCountry("");
-    setCity("");
-    setAddress("");
-    setBornDate("");
-    setStartWorkData("");
-    setSelectedWorkStatus("");
-    setSelectedPosition("");
-    setSelectedSalaryType("");
-    setSalaryAmount("");
-    setPto(0);
-
-  } catch (error) {
-    console.log("Unexpected error:", error);
-  }
-};
-
+  };
 
   const addSalary = async (employeeId, salaryTypeId, amount) => {
     try {
@@ -95,8 +98,6 @@ const EmployeeAdd = () => {
 
       if (error) {
         console.log("Insert salary error:", error);
-      } else {
-        console.log("Salary added:", data);
       }
     } catch (err) {
       console.log("Unexpected salary error:", err);
@@ -268,7 +269,9 @@ const EmployeeAdd = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Status zaposlenja</label>
+              <label className="block text-gray-700 mb-1">
+                Status zaposlenja
+              </label>
               <select
                 value={selectedWorkStatus}
                 onChange={(e) => setSelectedWorkStatus(e.target.value)}

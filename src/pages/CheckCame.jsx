@@ -91,7 +91,7 @@ const CheckCame = () => {
                 </p>
 
                 <p className="text-sm text-gray-500">
-                  Došap:{" "}
+                  Došao:{" "}
                   <span
                     className={`font-semibold ${
                       check?.came ? "text-green-600" : "text-red-600"

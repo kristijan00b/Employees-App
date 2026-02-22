@@ -77,7 +77,7 @@ const Login = () => {
             disabled={loading}
             className="hover:cursor-pointer w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Logging in..." : "Log In"}
+            {loading ? "Prijavljivanje..." : "Prijavi se"}
           </button>
         </form>
         {error && (

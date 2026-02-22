@@ -153,19 +153,29 @@ const EmployeesList = () => {
         {currentRows.map((employee, index) => (
           <div
             key={employee.id}
-            className="bg-white shadow-md rounded-2xl p-5 border border-gray-200 hover:shadow-lg transition"
+            className="bg-white shadow-md rounded-2xl p-5  hover:shadow-lg transition"
           >
             <div className="mb-2 border-b border-gray-200">
               <p className="text-xs text-gray-500">
                 {index + currentPage * rowsPerPage - rowsPerPage + 1}.
               </p>
             </div>
-
-            <div className="mb-3">
-              <p className="text-xs text-gray-500">ID</p>
-              <p className="font-semibold text-lg">{employee.id}</p>
+            <div className="flex justify-between ">
+              <div className="mb-3">
+                <p className="text-xs text-gray-500">ID</p>
+                <p className="font-semibold text-lg">{employee.id}</p>
+              </div>
+              <div className="mb-3">
+                <img
+                  src={
+                    employee.image_path ||
+                    "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-High-Quality-Image.png"
+                  }
+                  alt="Profil"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              </div>
             </div>
-
             <div className="mb-3">
               <p className="text-xs text-gray-500">Ime i prezime</p>
               <p className="font-semibold text-lg">

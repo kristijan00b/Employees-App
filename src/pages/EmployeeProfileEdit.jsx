@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useParams, useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 const EmployeeProfileEdit = () => {
   const { employeeId } = useParams();
@@ -8,10 +9,14 @@ const EmployeeProfileEdit = () => {
 
   const [employeeData, setEmployeeData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const [salaryTypeId, setSalaryTypeId] = useState("");
   const [salaryAmount, setSalaryAmount] = useState("");
   const [salaryTypes, setSalaryTypes] = useState([]);
+
+  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [profilePhotoURL, setProfilePhotoURL] = useState("");
 
   useEffect(() => {
     fetchEmployee();
@@ -29,31 +34,54 @@ const EmployeeProfileEdit = () => {
       console.error(error);
     } else {
       setEmployeeData(data);
+
+      // Ako postoji image_path, koristi ga direktno jer vec sadrži ceo URL
+      if (data.image_path) {
+        setProfilePhotoURL(data.image_path);
+      }
     }
 
     setLoading(false);
   };
 
   const fetchSalary = async () => {
-    // fetch salary types za select
     const { data: types, error: typesError } = await supabase
       .from("SalaryType")
       .select("*");
     if (typesError) console.log("SalaryType fetch error", typesError);
     setSalaryTypes(types || []);
 
-    // fetch trenutna plata zaposlenog
     const { data: salary, error: salaryError } = await supabase
       .from("Salary")
       .select("amount, salary_type_id")
       .eq("employee_id", employeeId)
-      .single(); // pretpostavljamo da je 1 salary po zaposlenom
+      .single();
     if (salaryError) console.log("Salary fetch error", salaryError);
 
     if (salary) {
       setSalaryTypeId(salary.salary_type_id);
       setSalaryAmount(salary.amount);
     }
+  };
+
+  const uploadProfilePhoto = async (employeeId) => {
+    if (!profilePhoto) return null;
+
+    const fileExt = profilePhoto.name.split(".").pop();
+    const fileName = `${uuidv4()}.${fileExt}`;
+    const filePath = `${employeeId}/${fileName}`;
+
+    const { error } = await supabase.storage
+      .from("EmployeeImage")
+      .upload(filePath, profilePhoto);
+
+    if (error) {
+      console.log("Upload error:", error);
+      return null;
+    }
+
+    // Public URL je bucket + path
+    return `https://rrhobhrtgahlwynyyduq.supabase.co/storage/v1/object/public/EmployeeImage/${filePath}`;
   };
 
   const handleChange = (e) => {
@@ -64,11 +92,21 @@ const EmployeeProfileEdit = () => {
   };
 
   const handleUpdate = async () => {
-    // Update employee
+    setSaving(true);
     const { error: empError } = await supabase
       .from("Employee")
       .update(employeeData)
       .eq("id", employeeId);
+
+    const newImageURL = await uploadProfilePhoto(employeeData.id);
+    if (newImageURL) {
+      await supabase
+        .from("Employee")
+        .update({ image_path: newImageURL })
+        .eq("id", employeeData.id);
+
+      setProfilePhotoURL(newImageURL); // prikaz nove slike
+    }
 
     if (empError) {
       console.error("Employee update error:", empError);
@@ -83,7 +121,6 @@ const EmployeeProfileEdit = () => {
       .single();
 
     if (existingSalary) {
-      // update existing salary
       const { error: salaryError } = await supabase
         .from("Salary")
         .update({
@@ -94,7 +131,6 @@ const EmployeeProfileEdit = () => {
 
       if (salaryError) console.error("Salary update error:", salaryError);
     } else {
-      // insert new salary
       const { error: salaryError } = await supabase.from("Salary").insert([
         {
           employee_id: employeeId,
@@ -105,6 +141,7 @@ const EmployeeProfileEdit = () => {
 
       if (salaryError) console.error("Salary insert error:", salaryError);
     }
+    setSaving(false);
 
     navigate(`/dashboard/employee-profile/${employeeId}`);
   };
@@ -117,7 +154,8 @@ const EmployeeProfileEdit = () => {
     <div className="overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold mb-1">
-          <span className="text-xl font-normal">Izmeni</span> {employeeData.first_name} {employeeData.last_name}
+          <span className="text-xl font-normal">Izmeni</span>{" "}
+          {employeeData.first_name} {employeeData.last_name}
         </h2>
         <div>
           <div className="flex justify-end gap-3">
@@ -130,9 +168,14 @@ const EmployeeProfileEdit = () => {
 
             <button
               onClick={handleUpdate}
-              className="hover:cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+              disabled={saving}
+              className={`hover:cursor-pointer px-4 py-2 rounded-lg transition ${
+                saving
+                  ? "bg-blue-200 text-white cursor-wait" // svetlo plava dok cuva
+                  : "bg-blue-500 text-white hover:bg-blue-600"
+              }`}
             >
-              Sačuvaj
+              {saving ? "Čuvanje..." : "Sačuvaj"}
             </button>
           </div>
         </div>
@@ -245,6 +288,30 @@ const EmployeeProfileEdit = () => {
               onChange={(e) => setSalaryAmount(e.target.value)}
               className="bg-white p-2 rounded-md w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
+          </div>
+          <div className="flex flex-col">
+            <label className="text-gray-500 text-xs mb-1">Profilna slika</label>
+            <input
+              type="file"
+              accept="image/*"
+              className="hover:cursor-pointer bg-white shadow hover:bg-gray-200 p-2 rounded"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                setProfilePhoto(file);
+
+                setProfilePhotoURL(URL.createObjectURL(file));
+              }}
+            />
+
+            {profilePhotoURL && (
+              <div className="mt-2">
+                <img
+                  src={profilePhotoURL}
+                  alt="Profilna slika"
+                  className="w-18 h-18 object-cover rounded-full border border-gray-300"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

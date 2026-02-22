@@ -17,6 +17,8 @@ const EmployeeProfile = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [profilePhotoURL, setProfilePhotoURL] = useState("");
+
   const navigate = useNavigate();
 
   const fetchEmployee = async () => {
@@ -27,10 +29,14 @@ const EmployeeProfile = () => {
       .single();
 
     if (error) {
-      console.log("Error fetching all employees", error);
+      console.log("Error fetching employee", error);
     } else {
-      console.log(data);
       setEmployeeData(data);
+
+      // Ako postoji image_path, koristi ga direktno
+      if (data.image_path) {
+        setProfilePhotoURL(data.image_path); // VEĆ JE PUN URL
+      }
     }
     setLoading(false);
   };
@@ -137,9 +143,19 @@ const EmployeeProfile = () => {
     <div className="overflow-x-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold mb-1">
-          {employeeData.first_name} {employeeData.last_name}
-        </h2>
+        <div className="flex items-center">
+          <img
+            src={
+              profilePhotoURL ||
+              "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-High-Quality-Image.png"
+            }
+            alt="Profilna slika"
+            className="w-14 h-14 md:w-20 md:h-20 bg-white mr-2 rounded-full shadow "
+          />
+          <h2 className="text-2xl font-bold mb-1">
+            {employeeData.first_name} {employeeData.last_name}
+          </h2>
+        </div>
 
         <button
           className="hover:cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
